@@ -3,7 +3,7 @@
     // Protected routes
     ApiRoute(() => {
       Route.get("/", "OrderController.index");
-      Route.post("/", "OrderController.store").validator("pathValidator");
+      Route.post("/", "OrderController.store");
       Route.get("/:id", "OrderController.show");
       Route.put("/:id", "OrderController.update");
       Route.delete("/:id", "OrderController.destroy");

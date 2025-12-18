@@ -12,6 +12,18 @@ class Orders extends Model {
   static get table () {
     return 'orders'
   }
+
+  static get createdAtColumn() {
+    return 'created'
+  }
+
+  static get updatedAtColumn() {
+    return 'updated'
+  }
+
+  items() {
+    return this.hasMany('App/Modules/Sales/Models/OrderItem', 'order_id')
+  }
 }
 
 module.exports = Orders
