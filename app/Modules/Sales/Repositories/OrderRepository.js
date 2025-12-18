@@ -1,12 +1,12 @@
 
     'use strict'
     const BaseStorageRepository = use('App/Repositories/BaseStorageRepository');
-    class ShopRepository extends BaseStorageRepository{
+    class OrderRepository extends BaseStorageRepository{
         
     constructor() {
-      super("Shops", "App/Modules/Catalog/Models/")
+      super("Order", "App/Modules/Sales/Models/")
     } 
     
     }    
-    module.exports = ShopRepository
+    module.exports = OrderRepository
     

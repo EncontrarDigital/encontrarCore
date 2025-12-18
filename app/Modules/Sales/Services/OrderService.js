@@ -1,21 +1,21 @@
 
     'use strict'
     const Database = use("Database");
-    const ShopRepository = use("App/Modules/Catalog/Repositories/ShopRepository");
+    const OrderRepository = use("App/Modules/Sales/Repositories/OrderRepository");
 
-    class ShopService{
+    class OrderService{
         
     constructor(){}
 
-    async findAllShops(filters) {
+    async findAllOrders(filters) {
       const options = {
-        ...new ShopRepository().setOptions(filters),
+        ...new OrderRepository().setOptions(filters),
         typeOrderBy: "DESC",
-        withRalationships: ['products']
       };
   
-      let query = new ShopRepository()
-        .findAll(options.search, options)
+      let query = new OrderRepository()
+        .findAll(options.search, options) 
+        .where(function () {})//.where('is_deleted', 0)
       return query.paginate(options.page, options.perPage || 10);
     }
     /**
@@ -23,8 +23,8 @@
      * @param {*} Payload
      * @returns
      */
-    async createdShops(ModelPayload, UserId) {
-      return await new ShopRepository().create({
+    async createdOrders(ModelPayload, UserId) {
+      return await new OrderRepository().create({
         ...ModelPayload,
         user_id: UserId,
       });  
@@ -36,13 +36,10 @@
      * @param {*} Id
      * @returns
      */
-    async findShopById(Id) {
-      const data = await new ShopRepository()
-        .findById(Id, '*', ['products'])
+    async findOrderById(Id) {
+      return await new OrderRepository().findById(Id) 
+        //.where('is_deleted', 0)
         .first();
-
-        console.log(data)
-        return await data
     }
 
     /**
@@ -51,8 +48,8 @@
      * @param {*} Id
      * @returns
      */
-    async updatedShop(Id, ModelPayload) {
-      return await new ShopRepository().update(Id, ModelPayload);
+    async updatedOrder(Id, ModelPayload) {
+      return await new OrderRepository().update(Id, ModelPayload);
     } 
   
     /**
@@ -61,8 +58,8 @@
      * @param {*} Id 
      * @returns 
      */
-    async deleteTemporarilyShop(Id) {
-      return await new ShopRepository().delete(Id); 
+    async deleteTemporarilyOrder(Id) {
+      return await new OrderRepository().delete(Id); 
     }
 
     /**
@@ -71,8 +68,8 @@
      * @param {*} Id 
      * @returns 
     */
-    async deleteDefinitiveShop(Id) {
-      return await new ShopRepository().deleteDefinitive(Id); 
+    async deleteDefinitiveOrder(Id) {
+      return await new OrderRepository().deleteDefinitive(Id); 
     }
 
     /**
@@ -81,19 +78,17 @@
      * @param {*} Payload 
      * @returns 
      */ 
-    async findAllShopsTrash(filters) {
+    async findAllOrdersTrash(filters) {
         const options = {
-        ...new ShopRepository().setOptions(filters),
+        ...new OrderRepository().setOptions(filters),
         typeOrderBy: "DESC",
         };
-        let query = new ShopRepository()
+        let query = new OrderRepository()
         .findTrash(options.search, options) 
-        .where(function () {})
-        .with('products')
-        //.where('is_deleted', 1)
+        .where(function () {})//.where('is_deleted', 1)
         return query.paginate(options.page, options.perPage || 10);
     }
     
     }
-    module.exports = ShopService
+    module.exports = OrderService
     
