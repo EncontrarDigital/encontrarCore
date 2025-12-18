@@ -16,9 +16,9 @@ class Route extends Command {
   }
   async handle (args, flags) {
     const barra_so = path2.sep;
-    const route = args.name.toLowerCase(); 
+    const route = args.name; 
     const module = flags.m || "";
-    const path = `app${barra_so}Modules${barra_so}${module||''}${barra_so}routes${barra_so}${route}.routes.js`;
+    const path = `app${barra_so}Modules${barra_so}${module||''}${barra_so}routes${barra_so}${route.toLowerCase()}.routes.js`;
     const exists = await this.pathExists(path);
     if (exists) {
       this.error(`${Helpers.appRoot()}${barra_so}${path} already exists`);

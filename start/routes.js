@@ -14,7 +14,11 @@
 */
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
-const Route = use('Route') 
+const Route = use('Route')
+
+// Registar rotas do Swagger
+require('./swagger-routes')(Route)
+
 Route.get('/', () => {
   
   return { greeting: 'Hello world in JSON' }
