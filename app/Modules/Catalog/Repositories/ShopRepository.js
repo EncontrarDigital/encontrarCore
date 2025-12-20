@@ -6,7 +6,11 @@
     constructor() {
       super("Shops", "App/Modules/Catalog/Models/")
     } 
-    
+
+    findShopByUserId(UserId) {
+      return this.model.query().where('userId', UserId);
     }    
+
+    }
     module.exports = ShopRepository
     

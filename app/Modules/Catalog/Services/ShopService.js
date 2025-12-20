@@ -10,8 +10,7 @@
     async findAllShops(filters) {
       const options = {
         ...new ShopRepository().setOptions(filters),
-        typeOrderBy: "DESC",
-        withRalationships: ['products']
+        typeOrderBy: "DESC"
       };
   
       let query = new ShopRepository()
@@ -40,8 +39,13 @@
       const data = await new ShopRepository()
         .findById(Id, '*', ['products'])
         .first();
+        return await data
+    }
 
-        console.log(data)
+    async findShopByUserId(UserId) {
+      const data = await new ShopRepository()
+        .findShopByUserId(UserId, '*', ['products'])
+        .first();
         return await data
     }
 

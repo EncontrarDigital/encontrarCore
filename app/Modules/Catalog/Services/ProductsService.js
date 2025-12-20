@@ -2,6 +2,7 @@
     'use strict'
     const Database = use("Database");
     const ProductsRepository = use("App/Modules/Catalog/Repositories/ProductsRepository");
+    const ShopService = use('App/Modules/Catalog/Services/ShopService')
 
     class ProductsService{
         
@@ -20,7 +21,7 @@
   
       let query = new ProductsRepository()
         .findAll(search, options) 
-        .where(function () {})//.where('is_deleted', 0)
+        .where(function () {}).where('is_deleted', 0)
       return query.paginate(options.page, options.perPage || 10);
     }
     /**
@@ -45,6 +46,28 @@
       return await new ProductsRepository().findById(Id) 
         //.where('is_deleted', 0)
         .first();
+    }
+
+    async getProductsByShop(filters, UserId) {
+      const shop = await new ShopService().findShopByUserId(UserId)
+      const shopId = shop.id;
+
+      const search = filters.input("search");
+      const options = {
+        page: filters.input("page") || 1,
+        perPage: filters.input("perPage") || 10,
+        orderBy: filters.input("orderBy") || "id",
+        typeOrderBy: filters.input("typeOrderBy") || "DESC",
+        searchBy: ["name", "description"],
+        isPaginate: true
+      };
+  
+      let query = new ProductsRepository()
+        .findAll(search, options) 
+        .where(function () {})
+        .where('shopId', shopId)
+        .where('is_deleted', 0)
+      return query.paginate(options.page, options.perPage || 10);
     }
 
     /**
@@ -90,7 +113,7 @@
         };
         let query = new ProductsRepository()
         .findTrash(options.search, options) 
-        .where(function () {})//.where('is_deleted', 1)
+        .where(function () {}).where('is_deleted', 1)
         return query.paginate(options.page, options.perPage || 10);
     }
     

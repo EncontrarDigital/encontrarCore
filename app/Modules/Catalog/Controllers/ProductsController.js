@@ -53,6 +53,13 @@ class ProductsController{
     return response.ok(data);
   }
 
+  async getProductsByShop ({ request, response, auth  }) {
+    const filters = request;
+    const UserId = auth.user.id;
+    const data = await new ProductsService().getProductsByShop(filters, UserId);
+    return response.ok(data);
+  }
+
   /**
    * Update icttrunkout details.
    * PUT or PATCH icttrunkouts/:id
