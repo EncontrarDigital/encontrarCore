@@ -16,13 +16,18 @@ const OrderPaymentsRepository = use('App/Modules/Sales/Repositories/OrderPayment
     constructor(){}
 
     async findAllOrders(filters) {
+      const search = filters.input("search");
       const options = {
-        ...new OrderRepository().setOptions(filters),
-        typeOrderBy: "DESC",
+        page: filters.input("page") || 1,
+        perPage: filters.input("perPage") || 10,
+        orderBy: filters.input("orderBy") || "id",
+        typeOrderBy: filters.input("typeOrderBy") || "DESC",
+        searchBy: ["name", "description"],
+        isPaginate: true
       };
   
       let query = new OrderRepository()
-        .findAll(options.search, options) 
+        .findAll(search, options) 
         .where(function () {})//.where('is_deleted', 0)
       return query.paginate(options.page, options.perPage || 10);
     }
