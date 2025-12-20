@@ -163,6 +163,54 @@
 
 /**
  * @swagger
+ * /api/products/{id}/shops:
+ *   get:
+ *     security:
+ *     - bearerAuth: []
+ *     tags:
+ *       - Products
+ *     summary: Obter produtos por loja
+ *     parameters:
+ *       - name: id
+ *         description: ID da loja
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: page
+ *         description: Número da página
+ *         in: query
+ *         type: integer
+ *       - name: limit
+ *         description: Quantidade de registos por página
+ *         in: query
+ *         type: integer
+ *       - name: search
+ *         description: Pesquisar por nome
+ *         in: query
+ *         type: string
+ *       - name: category_id
+ *         description: Filtrar por categoria
+ *         in: query
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Lista de produtos da loja recuperada com sucesso
+ *         example:
+ *           data:
+ *             - id: 1
+ *               name: "iPhone 15"
+ *               description: "Latest iPhone model"
+ *               price: 999.99
+ *               category_id: 1
+ *               shop_id: 1
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Loja não encontrada
+ */
+
+/**
+ * @swagger
  * /api/products/{id}:
  *   delete:
  *     security:
