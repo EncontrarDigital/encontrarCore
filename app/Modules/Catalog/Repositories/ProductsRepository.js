@@ -8,7 +8,7 @@
     } 
 
     findProductsByShopId(ShopId) {
-      return this.model.query().where('shopId', ShopId);
+      return this.model.query().where('shopId', ShopId).where('is_deleted', 0);
     }    
     
     }    

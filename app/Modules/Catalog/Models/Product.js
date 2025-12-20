@@ -12,6 +12,14 @@ class Products extends Model {
   shop() {
     return this.belongsTo('App/Modules/Catalog/Models/Shops', 'shopId', 'id')
   }
+  
+  static get createdAtColumn() {
+    return 'created'
+  }
+
+  static get updatedAtColumn() {
+    return 'updated'
+  }
 
   static get table () {
     return 'products'

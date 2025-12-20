@@ -4,6 +4,7 @@
     const ProductsRepository = use("App/Modules/Catalog/Repositories/ProductsRepository");
     const ShopService = use('App/Modules/Catalog/Services/ShopService')
 
+
     class ProductsService{
         
     constructor(){}
@@ -29,11 +30,24 @@
      * @param {*} Payload
      * @returns
      */
-    async createdProductss(ModelPayload, UserId) {
+    async createdProduct(ModelPayload, UserId) {
+      const shop = await new ShopService().findShopByUserId(UserId)
+      const ShopId = shop.id;
+      const purchasePrice = ModelPayload.purchasePrice;
+      const price = Math.round(ModelPayload.price) || await this.calculatePrice(purchasePrice)
       return await new ProductsRepository().create({
         ...ModelPayload,
-        user_id: UserId,
+        price: price,
+        shopId: ShopId,
       });  
+    }
+
+    async calculatePrice(purchasePrice, profitMargin = 0) {
+      const comissao = await Database.table('settings').where('name', 'Comissão').first();
+      if (comissao) {
+        profitMargin = comissao.value;
+      }
+      return purchasePrice + Math.round((purchasePrice * (profitMargin / 100)));
     }
      
    
