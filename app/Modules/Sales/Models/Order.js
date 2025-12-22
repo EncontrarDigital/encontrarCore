@@ -3,7 +3,7 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
 
-class Orders extends Model {
+class Order extends Model {
   static boot() {
     super.boot();
     this.addTrait("@provider:Auditable");
@@ -22,8 +22,8 @@ class Orders extends Model {
   }
 
   items() {
-    return this.hasMany('App/Modules/Sales/Models/OrderItem', 'order_id')
+    return this.hasMany('App/Modules/Sales/Models/OrderItem', 'order_id', 'id')
   }
 }
 
-module.exports = Orders
+module.exports = Order

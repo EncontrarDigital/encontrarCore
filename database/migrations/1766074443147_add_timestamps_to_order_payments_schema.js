@@ -12,7 +12,6 @@ class AddTimestampsToOrderPaymentsSchema extends Schema {
 
   down () {
     this.table('order_payments', (table) => {
-      table.dropTimestamps()
     })
   }
 }

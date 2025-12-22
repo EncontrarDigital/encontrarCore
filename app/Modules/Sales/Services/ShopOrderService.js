@@ -4,6 +4,8 @@
   const ShopService = use('App/Modules/Catalog/Services/ShopService')
   const OrderService = use('App/Modules/Sales/Services/OrderService')
   const ShopOrderRepository = use("App/Modules/Sales/Repositories/ShopOrderRepository");
+  const ShopOrderItemRepository = use("App/Modules/Sales/Repositories/ShopOrderItemRepository");
+
 
     class ShopOrderService{
         
@@ -36,12 +38,49 @@
      * @param {*} Payload
      * @returns
      */
-    async createdShopOrders(ModelPayload, UserId) {
+    async createdShopOrders(ModelPayload) {
       return await new ShopOrderRepository().create({
-        ...ModelPayload,
-        user_id: UserId,
+        ...ModelPayload
       });  
     }
+
+    static async createFromOrderItems (orderId, orderItems) {
+    const grouped = this.groupByShop(orderItems)
+
+    for (const shopId in grouped) {
+      const items = grouped[shopId]
+
+      const total = items.reduce((sum, i) => {
+        return sum + Number(i.price) * Number(i.quantity)
+      }, 0)
+
+      const shopOrder = await new ShopOrderRepository().create({
+        order_id: orderId,
+        shop_id: shopId,
+        status: 'PENDING',
+        total_amount: total
+      })
+
+      await this.attachItems(shopOrder.id, items)
+    }
+  }
+
+   static groupByShop (items) {
+    return items.reduce((acc, item) => {
+      acc[item.shopId] = acc[item.shopId] || []
+      acc[item.shopId].push(item)
+      return acc
+    }, {})
+  }
+
+  static async attachItems (shopOrderId, items) {
+    for (const item of items) {
+      await new ShopOrderItemRepository().create({
+        shop_order_id: shopOrderId,
+        order_item_id: item.id
+      })
+    }
+  }
 
     async acceptOrderByShop(OrderId, UserId) {
       return await this.updateOrderStatus(OrderId, 'accepted', UserId);

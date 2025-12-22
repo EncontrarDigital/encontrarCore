@@ -22,7 +22,7 @@ class OrderItems extends Model {
   // }
 
   order() {
-    return this.belongsTo('App/Modules/Sales/Models/Order', 'order_id')
+    return this.belongsTo('App/Modules/Sales/Models/Order', 'order_id', 'id')
   }
 
   product() {

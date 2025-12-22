@@ -14,8 +14,6 @@ class AddTimestampsToOrderItemsSchema extends Schema {
 
   down () {
     this.table('order_items', (table) => {
-      // reverse alternations
-      table.dropTimestamps()
 
     })
   }
