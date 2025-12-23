@@ -30,6 +30,15 @@ class AuthenticatedController {
     return data;
   }
 
+  async authenticateAsPartner({ request, response, auth }) {
+    const requestAndRole = {
+      ...request,
+      role: 'sales'
+    }
+    const data = this.#authRepo.authenticate(requestAndRole, auth, response);
+    return data;
+  }
+
   /**
    * refreshToken
    * POST /auth/refreshToken

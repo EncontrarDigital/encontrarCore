@@ -1,7 +1,7 @@
 "use strict";
 const User = use("App/Modules/Security/Users/Models/User");
 const Hash = use('Hash');
-
+const NotFoundException = use("App/Exceptions/NotFoundException");      
 class AuthenticatedRepository {
   constructor() { }
   /**
@@ -11,21 +11,25 @@ class AuthenticatedRepository {
    * @param {Object} response - response object
    */
   async authenticate(request, auth, response) {
-    const { email, password } = request.all();
+    const { email, password, role } = request.all();
     try {
-      
-      // Verificar se utilizador existe
-      const userExists = await User.findBy("email", email);
-      if (userExists) {
-        
+      // Verificar se utilizador existe)
+      const existingUser = await User.findBy("email", email)
+      .where(function () {
+          if( role === 'sales') {
+            this.where('role', 'sales');
+          } 
+        })   
+   
+      if (!existingUser) {
+        throw new NotFoundException("Usuário não encontrado");
       }
       
       const token = await auth
         .withRefreshToken()
         .attempt(email, password);
 
-      const user = await User.findBy("email", email);
-      const userData = user.toJSON();
+      const userData = existingUser.toJSON();
       
       delete userData.password;
       delete userData.created_at;

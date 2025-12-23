@@ -5,7 +5,7 @@ ApiRoute(() => {
 
     Route.get("/me", "AuthenticatedController.show").middleware(["auth"]);
     Route.get("/recover-password-sending-email", "AuthenticatedController.recoverPasswordSendingEmail")
-    Route.post("/login", "AuthenticatedController.authenticate")//.validator("AuthenticateUser");
+    Route.post("/login", "AuthenticatedController.authenticate").middleware(['role:customer,admin,manager']);//.validator("AuthenticateUser");
 
     Route.post("/logout", "AuthenticatedController.logout").middleware(["auth"]);
     Route.post("/changeIsLoggedUser", "AuthenticatedController.changeIsLoggedUser");
