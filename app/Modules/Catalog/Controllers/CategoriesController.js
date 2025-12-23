@@ -16,13 +16,20 @@ class CategoriesController{
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
-   
+
    */
-  async index ({ request, response,  }) { 
+  async index ({ request, response,  }) {
     const filters = request;
     const data = await new CategoriesService().findAllCategoriess(filters);
     return response.ok(data);
-  } 
+  }
+
+
+  async buildCategoriesTree ({ request, response,  }) {
+    const filters = request;
+    const data = await new CategoriesService().buildCategoriesTree(filters);
+    return response.ok(data);
+  }
   /**
    * Create/save a new icttrunkout.
    * POST icttrunkouts
@@ -45,7 +52,7 @@ class CategoriesController{
    * @param {object} ctx
    * @param {Request} ctx.request
    * @param {Response} ctx.response
-   
+
    */
   async show ({ params, response  }) {
     const Id = params.id;
@@ -76,7 +83,7 @@ class CategoriesController{
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, response }) { 
+  async destroy ({ params, response }) {
     const Id = params.id;
     const data = await new CategoriesService().deleteTemporarilyCategories(Id);
     return response.ok(data, {message: "Registo excluido com sucesso"});
@@ -84,4 +91,3 @@ class CategoriesController{
 }
 
 module.exports = CategoriesController
-    
