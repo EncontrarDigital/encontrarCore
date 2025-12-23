@@ -10,16 +10,18 @@ class AuthenticatedRepository {
    * @param {Object} auth - auth object
    * @param {Object} response - response object
    */
-  async authenticate(request, auth, response) {
-    const { email, password, role } = request.all();
+  async authenticate(options, auth, response) {
+    const { email, password } = options.request.all();
+    const role = options.role;
     try {
       // Verificar se utilizador existe)
-      const existingUser = await User.findBy("email", email)
-      .where(function () {
-          if( role === 'sales') {
-            this.where('role', 'sales');
-          } 
-        })   
+      const query = User.query().where('email', email);
+
+      if (role === 'sales') {
+        query.where('role', 'sales');
+      }
+
+      const existingUser = await query.first();
    
       if (!existingUser) {
         throw new NotFoundException("Usuário não encontrado");

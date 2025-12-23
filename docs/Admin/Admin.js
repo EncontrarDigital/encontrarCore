@@ -160,3 +160,106 @@
  *         description: Encomenda não encontrada
  */
 
+/**
+ * @swagger
+ * /api/admin/client/orders:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - Admin
+ *     summary: Listar todas as encomendas do cliente autenticado
+ *     parameters:
+ *       - name: page
+ *         description: Número da página
+ *         in: query
+ *         type: integer
+ *         default: 1
+ *       - name: perPage
+ *         description: Quantidade de registos por página
+ *         in: query
+ *         type: integer
+ *         default: 10
+ *       - name: search
+ *         description: Pesquisar por número de encomenda ou outros campos
+ *         in: query
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: Lista de encomendas do cliente recuperada com sucesso
+ *       401:
+ *         description: Não autorizado
+ */
+
+/**
+ * @swagger
+ * /api/admin/shop/orders/{id}:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - Admin
+ *     summary: Obter detalhes de uma encomenda específica da loja do utilizador autenticado
+ *     parameters:
+ *       - name: id
+ *         description: ID da encomenda
+ *         in: path
+ *         required: true
+ *         type: integer
+ *       - name: status
+ *         description: Estado da encomenda (PENDING, ACCEPTED, CANCELED, DELIVERED, LOADING, CONFIRMED)
+ *         in: query
+ *         type: string
+ *       - name: page
+ *         description: Número da página
+ *         in: query
+ *         type: integer
+ *         default: 1
+ *       - name: perPage
+ *         description: Quantidade de registos por página
+ *         in: query
+ *         type: integer
+ *         default: 10
+ *     responses:
+ *       200:
+ *         description: Detalhes da encomenda da loja recuperados com sucesso
+ *       401:
+ *         description: Não autorizado
+ *       404:
+ *         description: Encomenda não encontrada
+ */
+
+/**
+ * @swagger
+ * /api/shop/auth/login:
+ *   post:
+ *     tags:
+ *       - Admin
+ *     summary: Autenticar parceiro (vendedor) na área admin
+ *     parameters:
+ *       - name: body
+ *         in: body
+ *         required: true
+ *         schema:
+ *           type: object
+ *           required:
+ *             - email
+ *             - password
+ *           properties:
+ *             email:
+ *               type: string
+ *               format: email
+ *               example: partner@example.com
+ *             password:
+ *               type: string
+ *               format: password
+ *               example: "123456"
+ *     responses:
+ *       200:
+ *         description: Login de parceiro bem-sucedido
+ *       400:
+ *         description: Credenciais inválidas
+ *       404:
+ *         description: Utilizador não encontrado
+ */
+

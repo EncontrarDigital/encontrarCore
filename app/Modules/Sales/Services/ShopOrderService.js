@@ -16,7 +16,7 @@
       const options = {
         page: filters.input("page") || 1,
         perPage: filters.input("perPage") || 10,
-        orderBy: filters.input("orderBy") || "id",
+        orderBy: filters.input("orderBy") || "shop_orders.id",
         typeOrderBy: filters.input("typeOrderBy") || "DESC",
         status: filters.input("status") || "",
         searchBy: ["status"],
@@ -29,11 +29,11 @@
         .where(function () {
           if (options.status ) {
             if (options.status == 'LOADING') {
-              this.where('status', 'accepted');
+              this.where('shop_orders.status', 'accepted');
               } else if(options.status == 'CONFIRMED'){
-              this.where('status', 'delivered');
+              this.where('shop_orders.status', 'delivered');
               } else {
-              this.where('status', options.status);
+              this.where('shop_orders.status', options.status);
               }
           }
         }).where('shop_id', ShopId)
@@ -46,7 +46,7 @@
       const options = {
         page: filters.input("page") || 1,
         perPage: filters.input("perPage") || 10,
-        orderBy: filters.input("orderBy") || "id",
+        orderBy: filters.input("orderBy") || "shop_orders.id",
         typeOrderBy: filters.input("typeOrderBy") || "DESC",
         status: filters.input("status") || "",
         searchBy: ["status"],
@@ -58,10 +58,12 @@
         .innerJoin("orders", "orders.id", "shop_orders.order_id")
         .where(function () {
           if (options.status ) {
-              if (options.status == 'loading') {
-            this.where('status', 'accepted');
+            if (options.status == 'LOADING') {
+              this.where('shop_orders.status', 'accepted');
+              } else if(options.status == 'CONFIRMED'){
+              this.where('shop_orders.status', 'delivered');
               } else {
-                this.where('status', options.status);
+              this.where('shop_orders.status', options.status);
               }
           }
         }).where('shop_id', ShopId)

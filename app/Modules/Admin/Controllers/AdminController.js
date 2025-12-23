@@ -8,6 +8,9 @@ const ProductsService = use('App/Modules/Catalog/Services/ProductsService')
 const ShopService = use('App/Modules/Catalog/Services/ShopService')
 const ShopOrderService = use('App/Modules/Sales/Services/ShopOrderService')
 const OrderService = use('App/Modules/Sales/Services/OrderService')
+const AuthenticatedRepository = use('App/Modules/Security/Auth/Repositories/AuthenticatedRepository')
+const User = use('App/Modules/Security/Users/Models/User')
+
 
 /**
  * Resourceful controller for interacting with icttrunkouts
@@ -71,6 +74,33 @@ class AdminController{
     const OrderId = params.id
     const data = await new ShopOrderService().cancelOrderByShop(OrderId, UserId);
     return response.created(data, {message: "Pedido Cancelado com sucesso"});
+  }
+
+    async authenticateAsPartner({ request, response, auth }) {
+    const requestAndRole = {
+      request,
+      role: 'sales'
+    }
+
+    const { email } = request.all();
+
+    // Garantir que o utilizador existe
+    const user = await User.findBy('email', email);
+    if (!user) {
+      return response.unauthorized({
+        message: 'Credenciais inválidas',
+      });
+    }
+
+    // Verificar se o utilizador tem a role "sales"
+    const role = await user.role;
+    if ( role !='sales') {
+      return response.forbidden('Credenciais inválidas');
+    }
+
+    // Se passou na validação de role, segue o fluxo normal de autenticação
+    const data = await new AuthenticatedRepository().authenticate(requestAndRole, auth, response);
+    return data;
   }
 
 

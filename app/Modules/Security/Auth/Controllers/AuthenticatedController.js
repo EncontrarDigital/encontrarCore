@@ -5,6 +5,8 @@
 /** @typedef {import('@adonisjs/framework/src/View')} View */
 
 const AuthenticatedRepository = use('App/Modules/Security/Auth/Repositories/AuthenticatedRepository')
+const User = use('App/Modules/Security/Users/Models/User')
+
 /**
  * Resourceful controller for interacting with authenticateds
  */
@@ -26,18 +28,30 @@ class AuthenticatedController {
    * @auth Caniggia Moreira <caniggia.moreira.dias@ideiasdinamicas.com>
    */
   async authenticate({ request, response, auth }) {
-    const data = this.#authRepo.authenticate(request, auth, response);
-    return data;
-  }
-
-  async authenticateAsPartner({ request, response, auth }) {
+    const { email } = request.all();
     const requestAndRole = {
-      ...request,
-      role: 'sales'
+      request
     }
+
+    // Garantir que o utilizador existe
+    const user = await User.findBy('email', email);
+    if (!user) {
+      return response.unauthorized({
+        message: 'Credenciais inválidas',
+      });
+    }
+
+    // Verificar se o utilizador tem a role "sales"
+    const role = await user.role;
+    if ( role == 'sales') {
+      return response.forbidden('Credenciais inválidas');
+    }
+
+    // Se passou na validação de role, segue o fluxo normal de autenticação
     const data = this.#authRepo.authenticate(requestAndRole, auth, response);
     return data;
   }
+
 
   /**
    * refreshToken
