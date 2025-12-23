@@ -32,8 +32,11 @@ class AdminController{
   async getAllOrdersByShop ({ request, response, auth  }) {
     const filters = request;
     const UserId = auth.user.id;
-    const shop = await new ShopOrderService().getAllOrdersByShop(filters,UserId)
-    return response.ok(shop);
+    const shop = await new ShopService().findShopByUserId(UserId)
+    const shopId = shop.id;
+
+    const data = await new ShopOrderService().getAllOrdersByShop(filters,shopId)
+    return response.ok(data);
   }
   async findAllOrderByClient ({ request, response, auth  }) {
     const filters = request;

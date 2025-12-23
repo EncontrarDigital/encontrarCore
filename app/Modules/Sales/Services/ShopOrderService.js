@@ -22,6 +22,8 @@
         searchBy: ["name", "description"],
         isPaginate: true
       };
+
+      console.log("ShopId", ShopId);
   
       let query = new ShopOrderRepository()
         .findAll(search, options) 
