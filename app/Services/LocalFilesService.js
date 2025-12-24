@@ -5,6 +5,7 @@ const sharp = require('sharp')
 const Config = use('Config')
 const Env = use('Env')
 const SettingsService = use('App/Services/SettingsService')
+const axios = require('axios')
 
 // Adicione esta linha
 global.Headers = require('node-fetch').Headers;
@@ -31,20 +32,35 @@ class LocalFilesService {
   /**
    * Download a photo from Supabase storage
    * @param {string} path - File path in storage
-   * @returns {Promise<Blob|null>} File blob or null if error
+   * @returns {Promise<Buffer|null>} File buffer or null if error
    */
   async getPhoto(path) {
     try {
-      const { data, error } = await this.supabase.storage
-        .from(this.getBucket())
-        .download(path)
+      // Get Supabase configuration
+      const supabaseConfig = Config.get('supabase');
 
-      if (error || !data) {
-        console.error('Failed to download file:', error?.message)
-        return null
+      // Construct the public URL manually
+      const publicUrl = `${supabaseConfig.url}/storage/v1/object/public/${this.getBucket()}/${path}`;
+
+      // Download the file using axios with a timeout
+      const response = await axios({
+        method: 'GET',
+        url: publicUrl,
+        responseType: 'arraybuffer',
+        timeout: 10000, // 10 seconds timeout
+        headers: {
+          'apikey': supabaseConfig.key,
+          'Authorization': `Bearer ${supabaseConfig.key}`
+        }
+      });
+
+      if (!response.data) {
+        console.error('No data received from Supabase storage');
+        return null;
       }
 
-      return data
+      // Return the raw buffer
+      return response.data;
     } catch (error) {
       console.error('Error downloading photo:', error)
       return null

@@ -57,7 +57,7 @@ class ProductPhotosService {
    * @param {number} productId
    * @param {number} photoId
    * @param {boolean} thumbnail
-   * @returns {Promise<Blob>}
+   * @returns {Promise<Buffer>}
    */
   async getProductPhoto(productId, photoId, thumbnail = false) {
     const productPhoto = await this.productPhotoRepository.findByProductAndPhoto(productId, photoId)
@@ -68,7 +68,7 @@ class ProductPhotosService {
 
     const path = thumbnail ? productPhoto.thumbnailPath : productPhoto.path
     const file = await this.localFilesService.getPhoto(path)
-
+    
     if (!file) {
       throw new FileNotFoundException(`Product photo file not found: ${path}`)
     }

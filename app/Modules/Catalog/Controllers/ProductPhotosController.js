@@ -55,10 +55,8 @@ class ProductPhotosController {
       const { productId, photoId } = params
       const thumbnail = request.input('thumbnail', false) === 'true' || request.input('thumbnail') === true
 
-      const blob = await this.productPhotosService.getProductPhoto(productId, photoId, thumbnail)
-
-      // Convert blob to buffer and send as response
-      const buffer = Buffer.from(await blob.arrayBuffer())
+      const buffer = await this.productPhotosService.getProductPhoto(productId, photoId, thumbnail)
+      // Set appropriate content type (default to jpeg if not available)
       response.header('Content-Type', 'image/jpeg')
       return buffer
     } catch (error) {

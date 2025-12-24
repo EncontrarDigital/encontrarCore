@@ -18,5 +18,5 @@ module.exports = (ApiRoute, Route) =>
     
     // Delete product photo
     Route.delete("/:productId/photos/:photoId", "ProductPhotosController.destroy");
-  }, 'product_photos').namespace("App/Modules/Catalog/Controllers").middleware(["auth"]);
+  }, 'products').namespace("App/Modules/Catalog/Controllers").middleware(["auth"]);
 
