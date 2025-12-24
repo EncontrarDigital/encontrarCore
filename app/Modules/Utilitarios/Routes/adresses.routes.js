@@ -4,9 +4,9 @@
     ApiRoute(() => {
       Route.get("/", "AdressesController.index");
       Route.get("/buildAddressTree", "AdressesController.buildAddressTree");
-      Route.post("/", "AdressesController.store");
+      Route.post("/", "AdressesController.store").middleware(["auth"]);
       Route.get("/:id", "AdressesController.show");
-      Route.put("/:id", "AdressesController.update");
-      Route.delete("/:id", "AdressesController.destroy");
-    }, 'adresses').namespace("App/Modules/Utilitarios/Controllers").middleware(["auth"]);
+      Route.put("/:id", "AdressesController.update").middleware(["auth"]);
+      Route.delete("/:id", "AdressesController.destroy").middleware(["auth"]);
+    }, 'adresses').namespace("App/Modules/Utilitarios/Controllers")
     
