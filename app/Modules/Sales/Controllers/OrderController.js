@@ -33,7 +33,7 @@ class OrderController{
    */
   async store ({ request, response, auth }) {
     const ModelPayload = request.all();
-    const UserId = auth.user.id;
+    const UserId = auth.user ? auth.user.id : null;
     const data = await new OrderService().createdOrders({...ModelPayload}, UserId);
     return response.created(data, {message: "Registo efectuado com sucesso"});
   }

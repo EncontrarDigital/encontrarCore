@@ -1,11 +1,21 @@
 
-    module.exports = (ApiRoute, Route) => 
-    // Protected routes
-    ApiRoute(() => {
-      Route.get("/", "OrderController.index").middleware(['auth','role:admin,manager']);
-      Route.post("/", "OrderController.store");
-      Route.get("/:id", "OrderController.show").middleware(['auth','role:admin,customer,manager']);
-      Route.put("/:id", "OrderController.update").middleware(['auth','role:admin,manager']);
-      Route.delete("/:id", "OrderController.destroy").middleware(['auth','role:admin,manager']);
-    }, 'orders').namespace("App/Modules/Sales/Controllers")
+    module.exports = (ApiRoute, Route) => {
+      // Rotas públicas
+      ApiRoute(() => {
+        // Permite que qualquer um (autenticado ou não) crie um pedido
+        Route.post("/", "OrderController.store");
+        // Permite que qualquer um consulte um pedido pelo ID
+        Route.get("/:id", "OrderController.show");
+      }, 'orders').namespace("App/Modules/Sales/Controllers");
+      
+      // Rotas protegidas que requerem autenticação
+      ApiRoute(() => {
+        // Apenas admin/manager podem listar todos os pedidos
+        Route.get("/", "OrderController.index").middleware(['role:admin,manager']);
+        // Apenas admin/manager podem atualizar pedidos
+        Route.put("/:id", "OrderController.update").middleware(['role:admin,manager']);
+        // Apenas admin/manager podem excluir pedidos
+        Route.delete("/:id", "OrderController.destroy").middleware(['role:admin,manager']);
+      }, 'orders').namespace("App/Modules/Sales/Controllers").middleware(["auth"]);
+    };
     
