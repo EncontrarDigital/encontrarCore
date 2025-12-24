@@ -2,6 +2,7 @@
     'use strict'
     const Database = use("Database");
     const ProductsRepository = use("App/Modules/Catalog/Repositories/ProductsRepository");
+    const ShopService = use('App/Modules/Catalog/Services/ShopService')
 
     class ProductsService{
         
