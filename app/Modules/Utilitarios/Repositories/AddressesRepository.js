@@ -4,7 +4,7 @@
     class AddressesRepository extends BaseStorageRepository{
         
     constructor() {
-      super("Addresses", "App/Modules/Sales/Models/")
+      super("Addresses", "App/Modules/Utilitarios/Models/")
     } 
     
     }    
