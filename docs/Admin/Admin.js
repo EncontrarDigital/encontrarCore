@@ -263,3 +263,39 @@
  *         description: Utilizador não encontrado
  */
 
+/**
+ * @swagger
+ * /api/admin/shop/notifications:
+ *   get:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - Admin
+ *     summary: Obter notificações da loja do utilizador autenticado
+ *     parameters:
+ *       - name: page
+ *         description: Número da página
+ *         in: query
+ *         type: integer
+ *       - name: limit
+ *         description: Quantidade de registos por página
+ *         in: query
+ *         type: integer
+ *     responses:
+ *       200:
+ *         description: Lista de notificações da loja recuperada com sucesso
+ *         example:
+ *           data:
+ *             - id: 1
+ *               title: "Novo pedido na loja"
+ *               message: "Novo pedido #123 recebido na sua loja"
+ *               type: "order"
+ *               is_read: false
+ *               created_at: "2023-01-01T12:00:00.000Z"
+ *       401:
+ *         description: Não autorizado
+ *       403:
+ *         description: Acesso negado (apenas para vendedores)
+ *       404:
+ *         description: Loja não encontrada
+ */
