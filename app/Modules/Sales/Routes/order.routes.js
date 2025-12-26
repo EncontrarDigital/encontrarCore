@@ -11,11 +11,11 @@
       // Rotas protegidas que requerem autenticação
       ApiRoute(() => {
         // Apenas admin/manager podem listar todos os pedidos
-        Route.get("/", "OrderController.index").middleware(['role:admin,manager']);
+        Route.get("/", "OrderController.index").middleware(['auth','role:admin,manager']);
         // Apenas admin/manager podem atualizar pedidos
-        Route.put("/:id", "OrderController.update").middleware(['role:admin,manager']);
+        Route.put("/:id", "OrderController.update").middleware(['auth','role:admin,manager']);
         // Apenas admin/manager podem excluir pedidos
-        Route.delete("/:id", "OrderController.destroy").middleware(['role:admin,manager']);
-      }, 'orders').namespace("App/Modules/Sales/Controllers").middleware(["auth"]);
+        Route.delete("/:id", "OrderController.destroy").middleware(['auth','role:admin,manager']);
+      }, 'orders').namespace("App/Modules/Sales/Controllers")
     };
     
