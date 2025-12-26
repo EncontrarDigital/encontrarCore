@@ -33,7 +33,6 @@ class ProductsController{
    */
   async store ({ request, response, auth }) {
     const ModelPayload = request.all();
-    console.log(auth.user);
     const UserId = auth.user?.id;
     const data = await new ProductsService().createdProduct({...ModelPayload}, UserId);
     return response.created(data, {message: "Registo efectuado com sucesso"});
