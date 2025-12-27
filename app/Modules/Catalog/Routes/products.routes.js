@@ -1,14 +1,18 @@
 
     module.exports = (ApiRoute, Route) => {
     // Protected routes
-    ApiRoute(() => {
+    // ApiRoute(() => {
+    //   Route.get("/", "ProductsController.index");
+    //   Route.get("/category/:id", "ProductsController.getProductsByCategory");
+    //   Route.get("/:id", "ProductsController.show");
+    // }, 'products').namespace("App/Modules/Catalog/Controllers");
+  // }, 'products').namespace("App/Modules/Catalog/Controllers");
+  
+  
+  ApiRoute(() => {
       Route.get("/", "ProductsController.index");
       Route.get("/category/:id", "ProductsController.getProductsByCategory");
       Route.get("/:id", "ProductsController.show");
-    }, 'products').namespace("App/Modules/Catalog/Controllers");
-    
-
-    ApiRoute(() => {
       Route.post("/", "ProductsController.store").middleware(['role:sales']);
       Route.get("/:id/shops", "ProductsController.getProductsByShop").middleware(["auth"]);
       Route.put("/:id", "ProductsController.update").middleware(["auth"]);
