@@ -126,28 +126,42 @@ async function createAudit(
     throw new Error("Request param is empty");
   }
 
-  // get user data to store
-  var user = await auth.getUser()
   const url = request.originalUrl();
   const ip = request.ip();
-  user = typeof user !== undefined ? await user.toJSON() : user;
+  let userData = null;
+  let userId = null;
 
-  delete user.password;
+  try {
+    // Try to get user if authenticated
+    if (auth && auth.getUser) {
+      const user = await auth.getUser();
+      if (user) {
+        userData = typeof user.toJSON === 'function' ? await user.toJSON() : user;
+        if (userData) {
+          delete userData.password;
+          userId = userData.id || null;
+        }
+      }
+    }
+  } catch (error) {
+    // If there's an error getting user (e.g., no JWT), continue with null user
+    console.log('No authenticated user, creating audit log as guest');
+  }
 
   const log = await LoggerRepository.register({
-    user: user.id,
-    user_data: user,
+    user: userId,
+    user_data: userData,
     auditable_id: auditableId,
     auditable,
     event,
     url,
     ip,
-    message: `${auditable} created successfully!`,
+    message: `${auditable} ${event.toLowerCase()}d successfully!`,
     success: true,
     old_data: oldData,
     new_data: newData,
     created_at: new Date()
-  })
+  });
 }
 
 /**

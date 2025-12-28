@@ -33,9 +33,27 @@ class OrderController{
    */
   async store ({ request, response, auth }) {
     const ModelPayload = request.all();
-    const UserId = auth.user ? auth.user.id : null;
-    const data = await new OrderService().createdOrders({...ModelPayload}, UserId);
-    return response.created(data, {message: "Registo efectuado com sucesso"});
+    let userId = null;
+    
+    try {
+      // Tenta obter o usuário autenticado, mas não falha se não estiver autenticado
+      await auth.check();
+      userId = auth.user ? auth.user.id : null;
+    } catch (error) {
+      // Se não estiver autenticado, userId permanece null
+      console.log('Usuário não autenticado, criando pedido como convidado');
+    }
+    
+    try {
+      const data = await new OrderService().createdOrders({...ModelPayload}, userId);
+      return response.created(data, {message: "Registro efetuado com sucesso"});
+    } catch (error) {
+      console.error('Erro ao criar pedido:', error);
+      return response.status(500).json({
+        error: 'Erro ao processar o pedido',
+        details: error.message
+      });
+    }
   }
 
   /**
