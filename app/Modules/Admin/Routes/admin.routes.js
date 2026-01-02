@@ -11,6 +11,7 @@
       Route.post("/order/:id/cancelOrderByShop", "AdminController.cancelOrderByShop").middleware(['role:sales,admin,manager']);
       
       Route.get("/client/orders", "AdminController.findAllOrderByClient").middleware(['role:customer'])
+      Route.get("/client/info", "AdminController.getClientInfo").middleware(['role:customer']);
 
     }, 'admin').namespace("App/Modules/Admin/Controllers").middleware(["auth"]);
     

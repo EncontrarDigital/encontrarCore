@@ -12,6 +12,7 @@ const AuthenticatedRepository = use('App/Modules/Security/Auth/Repositories/Auth
 const User = use('App/Modules/Security/Users/Models/User')
 const NotFoundException = use("App/Exceptions/NotFoundException");
 const NotificationService = use('App/Modules/Notification/Services/NotificationService')
+const UsersService = use('App/Modules/Authentication/Services/UsersService')
 
 
 /**
@@ -31,6 +32,12 @@ class AdminController{
   async getShopInfo ({ response, auth  }) {
     const UserId = auth.user.id;
     const shop = await new ShopService().findShopByUserId(UserId)
+    return response.ok(shop);
+  }
+
+  async getClientInfo ({ response, auth  }) {
+    const UserId = auth.user.id;
+    const shop = await new UsersService().getClientInfo(UserId)
     return response.ok(shop);
   }
 

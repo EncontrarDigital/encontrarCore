@@ -33,8 +33,7 @@ class UsersController{
    */
   async store ({ request, response, auth }) {
     const ModelPayload = request.all();
-    const UserId = auth.user.id;
-    const data = await new UsersService().createdUserss({...ModelPayload}, UserId);
+    const data = await new UsersService().createUser({...ModelPayload});
     return response.created(data, {message: "Registo efectuado com sucesso"});
   }
 

@@ -28,6 +28,10 @@ class Users extends Model {
     return 'registered'
   }
 
+  static get hidden () {
+    return ['password']
+  }
+
   static get table () {
     return 'users'
   }

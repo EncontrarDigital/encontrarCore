@@ -25,10 +25,9 @@
      * @param {*} Payload
      * @returns
      */
-    async createdUserss(ModelPayload, UserId) {
+    async createUser(ModelPayload) {
       return await new UsersRepository().create({
-        ...ModelPayload,
-        user_id: UserId,
+        ...ModelPayload
       });  
     }
      
@@ -40,8 +39,25 @@
      */
     async findUsersById(Id) {
       const selectColumn = '"id", "firstName", "lastName", "email", "role", "registered" as created_at';
-      
       return await new UsersRepository().findById(Id, selectColumn) 
+        //.where('is_deleted', 0)
+        .first();
+    }
+
+    async findUsersByEmail(Email, role = null) {
+      const selectColumn = '"id", "firstName", "lastName", "email", "role", "registered" as created_at';
+      return await new UsersRepository().findAll(null, {}, selectColumn) 
+       .where(function () {
+          if (role === 'sales') {
+            this.where('role', 'sales');
+          }}
+        )
+        .where('email', Email)
+        .first();
+    }
+
+    async getClientInfo(Id) {
+      return await new UsersRepository().findById(Id) 
         //.where('is_deleted', 0)
         .first();
     }

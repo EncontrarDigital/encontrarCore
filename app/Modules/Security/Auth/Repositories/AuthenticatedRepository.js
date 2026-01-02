@@ -1,7 +1,5 @@
 "use strict";
-const User = use("App/Modules/Security/Users/Models/User");
-const Hash = use('Hash');
-const UserRepository = use("App/Modules/Authentication/Repositories/UsersRepository");
+const UsersService = use('App/Modules/Authentication/Services/UsersService')
 const NotFoundException = use("App/Exceptions/NotFoundException");      
 class AuthenticatedRepository {
   constructor() { }
@@ -25,7 +23,7 @@ class AuthenticatedRepository {
     const requestPayload = request.all();
     
     try {
-      const existingUser = await new UserRepository().findAll().where("email", requestPayload.email).first();
+      const existingUser = await new UsersService().findUsersByEmail(requestPayload.email);
 
       if (existingUser) {
         return response.unauthorized(null, {
@@ -35,7 +33,7 @@ class AuthenticatedRepository {
         });
       }
 
-      const newUser = await new UserRepository().create({ ...requestPayload})
+      const newUser = await new UsersService().createUser({ ...requestPayload})
 
       await this.authenticacao({
         email:newUser.email,
@@ -85,14 +83,7 @@ class AuthenticatedRepository {
   }
 
   async findByUserAuth(email, role) {
-    let existingUser = await new UserRepository().findAll()
-    .where("email", email) 
-    .where(function () {
-      if (role === 'sales') {
-        this.where('role', 'sales');
-      }
-    })
-    .first();
+    let existingUser = await new UsersService().findUsersByEmail(email, role);
   
      if (!existingUser) {
       throw new NotFoundException("Usuário não encontrado");
@@ -106,6 +97,7 @@ class AuthenticatedRepository {
     delete responseAdapter.user.password;
     delete responseAdapter.user.is_deleted;
     delete responseAdapter.user.created_at;
+    delete responseAdapter.user.role;
     delete responseAdapter.user.updated_at;
     return responseAdapter;
   }
