@@ -38,14 +38,14 @@
      * @returns
      */
     async findUsersById(Id) {
-      const selectColumn = '"id", "firstName", "lastName", "email", "role", "registered" as created_at';
+      const selectColumn = '"id", "firstName", "lastName", "email", "role", "registered" as created_at, "default_payment", "default_city", "default_address"';
       return await new UsersRepository().findById(Id, selectColumn) 
         //.where('is_deleted', 0)
         .first();
     }
 
     async findUsersByEmail(Email, role = null) {
-      const selectColumn = '"id", "firstName", "lastName", "email", "role", "registered" as created_at';
+      const selectColumn = '"id", "firstName", "lastName", "email", "role", "registered" as created_at, "default_payment", "default_city", "default_address"';
       return await new UsersRepository().findAll(null, {}, selectColumn) 
        .where(function () {
           if (role === 'sales') {
