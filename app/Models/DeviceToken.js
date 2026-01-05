@@ -106,7 +106,6 @@ class DeviceToken extends Model {
       throw error
     }
   }
-  }
 
   /**
    * Remove um token de dispositivo
