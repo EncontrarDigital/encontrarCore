@@ -44,7 +44,7 @@
 
     async getOrderByShop(OrderId, filters, ShopId) {
         const selectColumn =
-      `shop_orders.id, shop_orders.order_id, shop_orders.shop_id, shop_orders.status, shop_orders.total_amount, shop_orders.created_at, shop_orders.updated_at, orders."fullName" ,orders."contactEmail"`;
+      `shop_orders.id, shop_orders.order_id, shop_orders.shop_id, shop_orders.status, shop_orders.total_amount, shop_orders.created_at, shop_orders.updated_at, orders."fullName" ,orders."contactEmail", orders."order_number"`;
       const search = filters.input("search");
       const options = {
         page: filters.input("page") || 1,
