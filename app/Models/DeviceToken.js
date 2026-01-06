@@ -53,7 +53,8 @@ class DeviceToken extends Model {
       }
 
       // Verifica se o token já existe para este usuário
-      let deviceToken = await this.where('user_id', userId)
+      let deviceToken = await this.query()
+        .where('user_id', userId)
         .where('token', fcmToken)
         .first()
 
@@ -89,7 +90,7 @@ class DeviceToken extends Model {
    */
   static async deactivateToken(token, userId = null) {
     try {
-      let query = this.where('token', token)
+      let query = this.query().where('token', token)
       
       if (userId) {
         query = query.where('user_id', userId)
@@ -112,7 +113,7 @@ class DeviceToken extends Model {
    */
   static async removeToken(token) {
     try {
-      await this.where('token', token).delete()
+      await this.query().where('token', token).delete()
     } catch (error) {
       console.error('Error removing device token:', error.message)
       throw error
@@ -124,11 +125,12 @@ class DeviceToken extends Model {
    */
   static async getActiveTokens(userId) {
     try {
-      const tokens = await this.where('user_id', userId)
+      const tokens = await this.query()
+        .where('user_id', userId)
         .where('is_active', true)
         .fetch()
 
-      return tokens.rows.map(t => t.token)
+      return tokens.toJSON().map(t => t.token)
     } catch (error) {
       console.error('Error getting active tokens:', error.message)
       throw error

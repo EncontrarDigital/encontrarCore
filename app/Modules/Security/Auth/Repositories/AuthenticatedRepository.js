@@ -2,6 +2,8 @@
 const UsersService = use('App/Modules/Authentication/Services/UsersService')
 const NotFoundException = use("App/Exceptions/NotFoundException");
 const DeviceToken = use('App/Models/DeviceToken');      
+const DeviceTokenService = use('App/Modules/Authentication/Services/DeviceTokenService')
+
 class AuthenticatedRepository {
   constructor() { }
   /**
@@ -41,7 +43,12 @@ class AuthenticatedRepository {
         });
       }
 
-      const newUser = await new UsersService().createUser({ ...requestPayload})
+      const newUser = await new UsersService().createUser({ 
+        email:requestPayload.email,
+        firstName:requestPayload.firstName,
+        lastName:requestPayload.lastName,
+        password:requestPayload.password,
+      })
 
       await this.authenticacao({
         email:newUser.email,
@@ -152,12 +159,12 @@ class AuthenticatedRepository {
     }
 
     try {
-      await DeviceToken.registerToken({
-        user_id: user.id,
-        token: fcmToken,
-        device_name: deviceName || 'Mobile Device',
-        device_type: deviceType || 'mobile'
-      });
+      await new DeviceTokenService().registerToken(
+        user.id,
+        fcmToken,
+        `Device-${new Date().getTime()}` || 'Mobile Device',
+        'mobile'
+      );
     } catch (tokenError) {
       console.error('Erro ao registar FCM token:', tokenError.message);
       // Não bloqueia a autenticação se falhar o registro do token

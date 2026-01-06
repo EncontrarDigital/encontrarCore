@@ -27,9 +27,8 @@
     async registerToken(userId, token, deviceName, deviceType = 'mobile') {
 
       let deviceToken = await this.findDeviceTokenByName(token)
-
       if(deviceToken){
-        await this.updatedDeviceToken(deviceToken.id, {
+        return await this.updatedDeviceToken(deviceToken.id, {
         device_name: deviceName,
         device_type: deviceType,
         is_active: true,
