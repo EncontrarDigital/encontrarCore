@@ -3,6 +3,7 @@ const UsersService = use('App/Modules/Authentication/Services/UsersService')
 const NotFoundException = use("App/Exceptions/NotFoundException");
 const DeviceToken = use('App/Models/DeviceToken');      
 const DeviceTokenService = use('App/Modules/Authentication/Services/DeviceTokenService')
+const Database = use("Database");
 
 class AuthenticatedRepository {
   constructor() { }
@@ -117,7 +118,7 @@ class AuthenticatedRepository {
     delete responseAdapter.user.created_at;
     delete responseAdapter.user.role;
     delete responseAdapter.user.updated_at;
-    return responseAdapter;
+    return response,Adapter;
   }
 
 
@@ -131,11 +132,10 @@ class AuthenticatedRepository {
       const check = await auth.check();
       if (check) {
         const user = await auth.getUser();
-        const { fcm_token } = request.all();
         
-        // Desregistar FCM token se foi fornecido
-        if (fcm_token && user && user.id) {
-          await this.deactivateFcmToken(fcm_token, user.id);
+        // Desativar TODOS os tokens FCM do user (logout de todos os dispositivos)
+        if (user && user.id) {
+          await this.deactivateAllFcmTokens(user.id);
         }
         
         await auth.logout();
@@ -172,7 +172,31 @@ class AuthenticatedRepository {
   }
 
   /**
-   * Desativar token FCM para um utilizador
+   * Desativar TODOS os tokens FCM de um utilizador (logout de todos os dispositivos)
+   * @param {number} userId - ID do utilizador
+   */
+  async deactivateAllFcmTokens(userId) {
+    if (!userId) {
+      return;
+    }
+
+    const activedTokens = await Database
+      .from('device_tokens')
+      .where('user_id', userId)
+      .andWhere('is_active', true);
+
+    try {
+      activedTokens.forEach(async token => {
+        await new DeviceTokenService().deactivateToken(token.token);
+      });
+    } catch (tokenError) {
+      console.error('Erro ao desativar todos os tokens FCM:', tokenError.message);
+      // Não bloqueia o logout se falhar
+    }
+  }
+
+  /**
+   * Desativar token FCM específico para um utilizador
    * @param {string} fcmToken - Token FCM
    * @param {number} userId - ID do utilizador
    */
