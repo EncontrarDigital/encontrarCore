@@ -35,6 +35,8 @@ class FirebaseProvider {
         throw new Error('FIREBASE_SERVICE_ACCOUNT JSON is missing required fields: project_id, private_key, or client_email')
       }
 
+      console.log(`✓ Initializing Firebase for project: ${serviceAccount.project_id}`)
+
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
         projectId: serviceAccount.project_id,
