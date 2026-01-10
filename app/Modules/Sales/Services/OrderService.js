@@ -27,7 +27,7 @@ const FirebaseService = use('App/Services/FirebaseService')
       return query.paginate(options.page, options.perPage || 10);
     }
 
-    async findAllOrderByClient(filters, UserId) {
+    async findAllOrderByClient(filters, UserEmail) {
       const selectColumn = `orders.order_number as id, orders.status, orders.created, orders."fullName" as client,` + 
       `orders."contactPhone", orders."contactEmail", payment_methods.name as payment_method, ` + 
       `order_deliveries.address as deliveryId, order_deliveries.price as delivery_tax `;
@@ -58,7 +58,7 @@ const FirebaseService = use('App/Services/FirebaseService')
                 this.where('orders.status', 'pending');
               }
             }
-        }).where('userId', UserId)
+        }).where('contactEmail', UserEmail)
       return query.paginate(options.page, options.perPage || 10);
     }
     /**

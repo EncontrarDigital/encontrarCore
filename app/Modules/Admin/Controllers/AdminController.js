@@ -67,7 +67,8 @@ class AdminController{
   async findAllOrderByClient ({ request, response, auth  }) {
     const filters = request;
     const UserId = auth.user.id;
-    const order = await new OrderService().findAllOrderByClient(filters,UserId)
+    const UserEmail = auth.user.email;
+    const order = await new OrderService().findAllOrderByClient(filters,UserEmail)
     return response.ok(order);
   }
   
