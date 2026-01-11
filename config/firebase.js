@@ -179,7 +179,6 @@ class FirebaseProvider {
         response.responses.forEach((resp, idx) => {
           if (!resp.success) {
             failedTokens.push(tokens[idx])
-            console.error(`  - Token failed: ${tokens[idx]}, Error: ${resp.error?.message}`)
           }
         })
       }
