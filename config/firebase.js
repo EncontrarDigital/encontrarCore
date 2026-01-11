@@ -39,8 +39,7 @@ class FirebaseProvider {
 
       firebaseApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        projectId: serviceAccount.project_id,
-        databaseURL: Env.get('FIREBASE_DATABASE_URL', '')
+        projectId: serviceAccount.project_id
       })
 
       // Verificar que o messaging service está disponível
