@@ -9,7 +9,7 @@ class AddProptoUsersSchema extends Schema {
       table.string("default_address", 255).nullable().after('password')
       table.string("default_city", 255).nullable().after('password')
       table.string("default_payment", 255).nullable().after('password')
-
+      table.string("default_phone", 255).nullable().after('role')
       // alter table
     })
   }

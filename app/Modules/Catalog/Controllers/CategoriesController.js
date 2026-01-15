@@ -88,6 +88,63 @@ class CategoriesController{
     const data = await new CategoriesService().deleteTemporarilyCategories(Id);
     return response.ok(data, {message: "Registo excluido com sucesso"});
   }
+
+  /**
+   * Upload category icon
+   * POST /categories/:id/icon
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {Object} ctx.params
+   */
+  async uploadIcon ({ params, request, response }) {
+    try {
+      const categoryId = params.id;
+      const file = request.file('icon', {
+        types: ['image'],
+        size: '5mb'
+      });
+
+      if (!file) {
+        return response.badRequest({ 
+          message: 'No icon file provided' 
+        });
+      }
+
+      const categoriesService = new CategoriesService();
+      const data = await categoriesService.uploadCategoryIcon(categoryId, file);
+
+      return response.ok(data, { message: "Icon uploaded successfully" });
+    } catch (error) {
+      return response.badRequest({ 
+        message: error.message || 'Failed to upload icon' 
+      });
+    }
+  }
+
+  /**
+   * Delete category icon
+   * DELETE /categories/:id/icon
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {Object} ctx.params
+   */
+  async deleteIcon ({ params, request, response }) {
+    try {
+      const categoryId = params.id;
+      const categoriesService = new CategoriesService();
+      const data = await categoriesService.deleteCategoryIcon(categoryId);
+
+      return response.ok(data, { message: "Icon deleted successfully" });
+    } catch (error) {
+      return response.badRequest({ 
+        message: error.message || 'Failed to delete icon' 
+      });
+    }
+  }
 }
 
 module.exports = CategoriesController

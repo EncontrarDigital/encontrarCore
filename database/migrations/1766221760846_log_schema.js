@@ -8,6 +8,7 @@ class LogSchema extends Schema {
     this.create('logs', (table) => {
       table.increments()
       table.integer('user').unsigned().references('id').inTable('users')
+      table.text('user_data').after('user')
       table.string('event',75)
       table.integer('auditable_id')
       table.string('auditable',75)
