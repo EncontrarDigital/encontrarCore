@@ -94,6 +94,13 @@
      * @param {*} Id
      * @returns
      */
+    async getDeliveryTaxByCityName(name) {
+      return await Database.select('price').from('addresses')
+        .where('name', name)
+        //.where('is_deleted', 0)
+        .first();
+    }
+
     async findAdressesById(Id) {
       return await new AdressesRepository().findById(Id) 
         //.where('is_deleted', 0)

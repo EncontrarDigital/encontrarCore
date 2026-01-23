@@ -29,6 +29,12 @@ class AdressesController{
     const data = await new AdressesService().buildAddressTree(filters);
     return response.ok(data);
   } 
+
+  async getDeliveryTaxByCityName ({ request, response,  }) { 
+    const addressName = request.input('addressName');
+    const data = await new AdressesService().getDeliveryTaxByCityName(addressName);
+    return response.ok(data);
+  } 
   /**
    * Create/save a new icttrunkout.
    * POST icttrunkouts
