@@ -69,6 +69,18 @@ class NotificationController{
     return response.ok(data, {message: "Registo actualizado com sucesso"});
   }
 
+  async readNotification({ params, response, auth }) {
+    const Id = params.id;
+    const UserId = auth.user.id;
+    const data = await new NotificationService().readNotification(Id, UserId);
+    return response.ok(data, { message: "Notificação marcada como lida" });
+  }
+
+  async readAllNotifications({ response, auth }) {
+    const UserId = auth.user.id;
+    const data = await new NotificationService().readAllNotifications(UserId);
+    return response.ok(data, { message: "Notificações marcadas como lidas" });
+  }
   /**
    * Delete a icttrunkout with id.
    * DELETE icttrunkouts/:id

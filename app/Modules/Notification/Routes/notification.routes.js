@@ -5,9 +5,10 @@ module.exports = (ApiRoute, Route) => {
     Route.get("/", "NotificationController.index");
     Route.post("/", "NotificationController.store");
     Route.get("/:id", "NotificationController.show");
+    Route.put("/:id", "NotificationController.readNotification");
+    Route.put("/read/all-notifications", "NotificationController.readAllNotifications");
     Route.put("/:id", "NotificationController.update");
     Route.delete("/:id", "NotificationController.destroy");
-    
     // Firebase Push Notifications Routes
     Route.post("/device-token/register", "DeviceTokenController.register");
     Route.post("/device-token/unregister", "DeviceTokenController.unregister");
