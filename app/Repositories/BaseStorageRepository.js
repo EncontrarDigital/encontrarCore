@@ -121,13 +121,13 @@ class BaseStorageRepository {
             if (options.searchBy instanceof Array) {
               options.searchBy.forEach((key, index) => {
                 if (index === 0) {
-                  this.where(key, "like", `%${search}%`);
+                  this.whereRaw(`LOWER(${key}) LIKE LOWER(?)`, [`%${search}%`]);
                   return;
                 }
-                this.orWhere(key, "like", `%${search}%`);
+                this.orWhereRaw(`LOWER(${key}) LIKE LOWER(?)`, [`%${search}%`]);
               });
             } else {
-              this.where(options.searchBy, "like", `%${search}%`);
+              this.whereRaw(`LOWER(${options.searchBy}) LIKE LOWER(?)`, [`%${search}%`]);
             }
           }
         }
