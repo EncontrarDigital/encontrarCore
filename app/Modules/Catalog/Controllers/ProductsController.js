@@ -67,6 +67,13 @@ class ProductsController{
     return response.ok(data);
   }
 
+  async getProductsByCategorySlug ({ params, request, response }) {
+    const filters = request;
+    const slug = params.slug;
+    const data = await new ProductsService().getProductsByCategorySlug(filters, slug);
+    return response.ok(data);
+  }
+
   /**
    * Update icttrunkout details.
    * PUT or PATCH icttrunkouts/:id

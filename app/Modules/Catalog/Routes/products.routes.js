@@ -4,6 +4,7 @@
     ApiRoute(() => {
       Route.get("/", "ProductsController.index");
       Route.get("/category/:id", "ProductsController.getProductsByCategory");
+      Route.get("/category-slug/:slug", "ProductsController.getProductsByCategorySlug");
       Route.get("/:id", "ProductsController.show");
     }, 'products').namespace("App/Modules/Catalog/Controllers");
   

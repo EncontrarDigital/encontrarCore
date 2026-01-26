@@ -106,6 +106,30 @@
       return query.paginate(options.page, options.perPage || 10);
     }
 
+    async getProductsByCategorySlug(filters, slug) {
+      const selectColumn = `products.*`
+      const search = filters.input("search");
+      const options = {
+        page: filters.input("page") || 1,
+        perPage: filters.input("perPage") || 10,
+        orderBy: filters.input("orderBy") || "products.id",
+        typeOrderBy: filters.input("typeOrderBy") || "DESC",
+        searchBy: ["name", "description"],
+        withRalationships: ["photos"],
+        isPaginate: true
+      };
+      
+      let query = new ProductsRepository()
+        .findAll(search, options, selectColumn) 
+        .innerJoin('categories_products_products', 'categories_products_products.productsId', 'products.id')
+        .innerJoin('categories', 'categories.id', 'categories_products_products.categoriesId')
+        .where(function () {})
+        .where('categories.slug', slug)
+        .where('products.is_deleted', 0)
+        .with('photos')
+      return query.paginate(options.page, options.perPage || 10);
+    }
+
     /**
      *
      * @param {*} Payload
