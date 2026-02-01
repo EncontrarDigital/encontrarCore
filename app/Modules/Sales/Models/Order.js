@@ -42,7 +42,7 @@ class Order extends Model {
             'pending': `Pedido #${orderInstance.order_number || orderInstance.id} está aguardando confirmação`,
             'open': `Pedido #${orderInstance.order_number || orderInstance.id} está sendo preparado`,
             'delivered': `Pedido #${orderInstance.order_number || orderInstance.id} foi entregue com sucesso`,
-            'confirmed': `🎉 Pedido #${orderInstance.order_number || orderInstance.id} concluído! Obrigado pela sua preferência. Continue a explorar mais produtos incríveis na nossa loja!`,
+            'confirmed': `🎉 Pedido #${orderInstance.order_number || orderInstance.id} concluído! Obrigado pela preferência.`,
             'cancelled': `Pedido #${orderInstance.order_number || orderInstance.id} foi cancelado`,
             'returned': `Pedido #${orderInstance.order_number || orderInstance.id} foi devolvido`
           }
