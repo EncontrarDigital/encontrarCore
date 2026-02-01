@@ -36,10 +36,14 @@
       
       if(deviceToken){
         console.log('♻️  Token já existe, atualizando:', deviceToken.id);
+        console.log('📝 User ID anterior:', deviceToken.user_id, '→ Novo user ID:', userId);
+        
+        // IMPORTANTE: Atualizar também o user_id quando o token já existe
         return await this.updatedDeviceToken(deviceToken.id, {
-        device_name: deviceName,
-        device_type: deviceType,
-        is_active: true,
+          user_id: userId,  // ✅ Adicionar esta linha
+          device_name: deviceName,
+          device_type: deviceType,
+          is_active: true,
         })
       }
       
