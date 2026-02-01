@@ -117,9 +117,13 @@ module.exports = {
   */
   postgres: {
     client: 'pg',
-      connection: {
-    connectionString: Env.get('DATABASE_URL'),
-  },
+    connection: {
+      host: Env.get('DB_HOST', 'localhost'),
+      port: Env.get('DB_PORT', 5432),
+      user: Env.get('DB_USER', 'postgres'),
+      password: Env.get('DB_PASSWORD', ''),
+      database: Env.get('DB_DATABASE', 'adonis')
+    },
     migrations: 'migrations',
     seeds: 'seeds',
     debug: Env.get('DB_DEBUG', false),
