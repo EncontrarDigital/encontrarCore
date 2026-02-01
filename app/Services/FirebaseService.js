@@ -252,12 +252,24 @@ class FirebaseService {
    */
   async notifyOrderStatusUpdate(order, newStatus, message) {
     try {
-      const customer = await Database.table('users').where('id', order.userId).first();
+      // Buscar userId - pode vir como userId ou user_id dependendo da serialização
+      const userId = order.userId || order.user_id
+      
+      if (!userId) {
+        console.log('⚠️  userId não encontrado no pedido:', order)
+        return
+      }
 
-      if (!customer) return
+      const customer = await Database.table('users').where('id', userId).first();
 
+      if (!customer) {
+        console.log(`⚠️  Cliente não encontrado: userId=${userId}`)
+        return
+      }
+
+      // Usar order_number se disponível, senão usar id
       const orderIdentifier = order.order_number || order.id
-
+    
       const notification = {
         title: 'Atualização de Pedido',
         body: message || `O seu pedido #${orderIdentifier} foi atualizado para ${newStatus}`
@@ -270,6 +282,16 @@ class FirebaseService {
         orderStatus: newStatus
       }
 
+      console.log(`📤 Enviando notificação para cliente ${customer.id}: Pedido #${orderIdentifier}`)
+      
+      // 1. Armazenar notificação na BD
+      await new NotificationService().createdNotifications({
+        title: notification.title,
+        message: notification.body,
+        type: 'order_status_update'
+      }, customer.id)
+
+      // 2. Enviar push notification via Firebase
       await this.notifyUser(customer.id, notification, data)
     } catch (error) {
       console.error('Error notifying order status update:', error.message)

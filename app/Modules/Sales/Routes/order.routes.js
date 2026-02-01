@@ -6,9 +6,9 @@
   
   // Protected routes (require authentication and admin/manager role)
   Route.group(() => {
-    Route.get('orders', 'OrderController.index').middleware(['auth', 'role:admin,manager']);
-    Route.put('orders/:id', 'OrderController.update').middleware(['auth', 'role:admin,manager']);
+    Route.get('orders', 'OrderController.index').middleware(['auth', 'role:admin,manager,customer']);
+    Route.put('orders/:id', 'OrderController.update').middleware(['auth', 'role:admin,manager,customer']);
     Route.delete('orders/:id', 'OrderController.destroy').middleware(['auth', 'role:admin,manager']);
-  }).prefix('api');
+  }).prefix('api').namespace('App/Modules/Sales/Controllers');
 };
     

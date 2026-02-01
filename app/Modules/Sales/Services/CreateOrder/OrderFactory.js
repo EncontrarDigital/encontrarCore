@@ -44,6 +44,9 @@ class OrderFactory {
         order.id,
         { order_number: orderNumber }
       )
+      
+      // Atualizar o objeto order com o order_number gerado
+      order.order_number = orderNumber
     }
 
     for (const item of pricing.items) {
