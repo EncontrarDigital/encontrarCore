@@ -54,7 +54,7 @@
       ccEmail: [],
       attachment: [],
       text:`Caro(a) <b> ${user.name} </b> Para recuperar a sua password clique no link abaixo
-       Nota: Este é um email automático enviado pelo sistema (UNIG4TELCO). Por favor não responda a este email.`,
+       Nota: Este é um email automático enviado pelo sistema (ENCONTRAR). Por favor não responda a este email.`,
        html:  resetPasswordTemplate(user.name,link,reset.token),
     }
     const EnvioEmail =  new emailService()

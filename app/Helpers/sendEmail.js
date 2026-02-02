@@ -6,12 +6,12 @@ class EnvioEmail {
   async emailService(emailConfig, cb) {
 
     let transporter = nodemailer.createTransport({
-      port: Env.get('SMTP_PORT'),
-      host: Env.get('SMTP_HOST'),
-      //secure: true, // true for 465, false for other ports 587
+      port: Env.get('SMTP_PORT', 587),
+      host: Env.get('SMTP_HOST', 'smtp.gmail.com'),
+      secure: Env.get('SMTP_SECURE', false) === 'true' || Env.get('SMTP_SECURE', false) === true,
       auth: {
         user: Env.get('EMAIL_FROM'),
-        pass: "$nig_port#24"
+        pass: Env.get('MAIL_PASSWORD')
       }
     });
 
