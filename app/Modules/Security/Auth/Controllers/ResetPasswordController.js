@@ -314,7 +314,7 @@ class ResetPasswordController {
                 if (response.ok) {
                     showMessage('✅ Senha alterada com sucesso! Redirecionando...', 'success');
                     setTimeout(() => {
-                        window.location.href = 'https://encontrarshopping.com/login';
+                        window.location.href = 'https://encontrarshopping.com/auth';
                     }, 2000);
                 } else {
                     showMessage(data.message || 'Erro ao alterar senha. Tente novamente.', 'error');
