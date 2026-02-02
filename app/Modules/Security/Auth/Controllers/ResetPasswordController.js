@@ -62,6 +62,282 @@ class ResetPasswordController {
     const data =  await this.#ResetPasswordService.verificToken(token);
     return data;
   }
+
+  async resetPasswordPage({ request, response }) {
+    const token = request.input('token');
+    
+    // Return a simple HTML page for password reset
+    const html = `
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redefinir Senha - Encontrar</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+        }
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .logo h1 {
+            color: #667eea;
+            font-size: 32px;
+            font-weight: bold;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 24px;
+        }
+        .subtitle {
+            color: #666;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin-top: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        .btn:active {
+            transform: translateY(0);
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .message {
+            padding: 12px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: none;
+            font-size: 14px;
+        }
+        .message.error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        .message.success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+        .message.show {
+            display: block;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 10px;
+        }
+        .loading.show {
+            display: block;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .password-requirements {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">
+            <h1>🛍️ ENCONTRAR</h1>
+        </div>
+        <h2>Redefinir Senha</h2>
+        <p class="subtitle">Digite sua nova senha abaixo</p>
+        
+        <div id="message" class="message"></div>
+        
+        <form id="resetForm">
+            <div class="form-group">
+                <label for="password">Nova Senha</label>
+                <input type="password" id="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres">
+                <div class="password-requirements">Mínimo de 6 caracteres</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="confirmPassword">Confirmar Senha</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required minlength="6" placeholder="Digite a senha novamente">
+            </div>
+            
+            <button type="submit" class="btn" id="submitBtn">Redefinir Senha</button>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="margin-top: 10px; color: #666;">Processando...</p>
+        </div>
+    </div>
+
+    <script>
+        const token = '${token}';
+        const form = document.getElementById('resetForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const loading = document.getElementById('loading');
+        const messageDiv = document.getElementById('message');
+
+        // Verify token on page load
+        async function verifyToken() {
+            try {
+                const response = await fetch(\`https://portal-api.encontrarshopping.com/api/resetpassword/verificToken?token=\${token}\`);
+                const data = await response.json();
+                
+                if (data.statusCode === 404) {
+                    showMessage('Token inválido ou expirado. Por favor, solicite um novo link de recuperação.', 'error');
+                    submitBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error verifying token:', error);
+                showMessage('Erro ao verificar token. Tente novamente.', 'error');
+            }
+        }
+
+        function showMessage(text, type) {
+            messageDiv.textContent = text;
+            messageDiv.className = 'message ' + type + ' show';
+        }
+
+        function hideMessage() {
+            messageDiv.className = 'message';
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            hideMessage();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                showMessage('As senhas não coincidem. Por favor, tente novamente.', 'error');
+                return;
+            }
+            
+            // Validate password length
+            if (password.length < 6) {
+                showMessage('A senha deve ter no mínimo 6 caracteres.', 'error');
+                return;
+            }
+            
+            // Show loading
+            submitBtn.disabled = true;
+            loading.classList.add('show');
+            
+            try {
+                const response = await fetch(\`https://portal-api.encontrarshopping.com/api/resetpassword/resetPassword/\${token}\`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showMessage('✅ Senha alterada com sucesso! Redirecionando...', 'success');
+                    setTimeout(() => {
+                        window.location.href = 'https://encontrarshopping.com/login';
+                    }, 2000);
+                } else {
+                    showMessage(data.message || 'Erro ao alterar senha. Tente novamente.', 'error');
+                    submitBtn.disabled = false;
+                }
+            } catch (error) {
+                console.error('Error resetting password:', error);
+                showMessage('Erro ao conectar com o servidor. Verifique sua conexão e tente novamente.', 'error');
+                submitBtn.disabled = false;
+            } finally {
+                loading.classList.remove('show');
+            }
+        });
+
+        // Verify token when page loads
+        verifyToken();
+    </script>
+</body>
+</html>
+    `;
+    
+    return response.header('Content-Type', 'text/html').send(html);
+  }
   
 }
 
