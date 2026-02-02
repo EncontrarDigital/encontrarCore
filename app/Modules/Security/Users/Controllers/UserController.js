@@ -162,12 +162,12 @@ class UserController {
     const data = await this.#UserRepo.update(params.id, {password: password});
 
     const emailConfig = {
-      subject: `Alteração da Password UNIG4TELCO`,
+      subject: `Alteração da Password ENCONTRAR`,
       email: user.email,
       ccEmail: [],
       attachment: [],
       text:`Caro(a) ${user.name} Foi Alterada a sua Password para ${password} 
-       Nota: Este é um email automático enviado pelo sistema (UNIG4TELCO). Por favor não responda a este email.`,
+       Nota: Este é um email automático enviado pelo sistema (ENCONTRAR). Por favor não responda a este email.`,
     }
 
     Event.fire('new::sendEmail', emailConfig);

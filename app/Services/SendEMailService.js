@@ -19,7 +19,7 @@ class SendEMailService {
     const transporter = this.createTransport();
     return await this.verifyConnection(transporter, async function () {
       await transporter.sendMail({
-          from: `UNIG4 ${Env.get("EMAIL_FROM")}`,
+          from: `ENCONTRAR`,
           to: To,
           subject: Subject,
           text: Text,

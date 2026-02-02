@@ -52,8 +52,8 @@ module.exports = (nameUser) => {
 
             <!-- Footer -->
             <div style="padding: 10px; background-color: #f4f4f4; text-align: center;">
-              <p style="font-size: 14px; line-height: 140%; color: #888888;">&copy; 2023 UNIG4TELCO - Portal SelfCare. Todos os direitos reservados.</p>
-              <p style="font-size: 14px; line-height: 140%; color: #888888;"><strong>Nota:</strong> Este é um email automático enviado pelo sistema (UNIG4TELCO). Por favor, não responda a este email.</p>
+              <p style="font-size: 14px; line-height: 140%; color: #888888;">&copy; 2023 ENCONTRAR - Portal SelfCare. Todos os direitos reservados.</p>
+              <p style="font-size: 14px; line-height: 140%; color: #888888;"><strong>Nota:</strong> Este é um email automático enviado pelo sistema (ENCONTRAR). Por favor, não responda a este email.</p>
             </div>
 
           </td>

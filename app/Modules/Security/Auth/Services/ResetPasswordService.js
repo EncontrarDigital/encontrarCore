@@ -48,14 +48,17 @@
 
    const reset =  await this.#resetPasswordRepo.create({email:email,token:email},null,false);
 
+    // Get user name - try different possible field names
+    const userName = user.firstName || user.username || user.first_name || user.nome || 'Cliente';
+
     const emailConfig = {
-      subject: `Redefinir senha do UNIG4TELCO`,
+      subject: `Redefinir senha do ENCONTRAR`,
       email: user.email,
       ccEmail: [],
       attachment: [],
-      text:`Caro(a) <b> ${user.name} </b> Para recuperar a sua password clique no link abaixo
+      text:`Caro(a) ${userName} Para recuperar a sua password clique no link abaixo
        Nota: Este é um email automático enviado pelo sistema (ENCONTRAR). Por favor não responda a este email.`,
-       html:  resetPasswordTemplate(user.name,link,reset.token),
+       html:  resetPasswordTemplate(userName,link,reset.token),
     }
     const EnvioEmail =  new emailService()
      const data = await EnvioEmail.emailService(emailConfig);

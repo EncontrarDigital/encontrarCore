@@ -113,7 +113,7 @@ module.exports = (nameUser,link,token) => {
   <td style="overflow-wrap:break-word;word-break:break-word;padding:40px 40px 30px;font-family:'Lato',sans-serif;" align="left">
     
 <div style="line-height: 140%; text-align: left; word-wrap: break-word;">
-<p style="font-size: 14px; line-height: 140%;"><span style="font-size: 18px; line-height: 25.2px; color: #666666;">Ol&aacute;, ${nameUser} !</span></p>
+<p style="font-size: 14px; line-height: 140%;"><span style="font-size: 18px; line-height: 25.2px; color: #666666;">Ol&aacute;, ${nameUser || 'Cliente'} !</span></p>
 <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 18px; line-height: 25.2px; color: #666666;">Enviamos este email em resposta à sua solicitação para redefinir sua senha.</span></p>
 <p style="font-size: 14px; line-height: 140%;"><span style="font-size: 18px; line-height: 25.2px; color: #666666;">Clique no Link abaixo para redefinir a sua senha: </span></p>
 </div>
@@ -129,7 +129,7 @@ module.exports = (nameUser,link,token) => {
   <td style="overflow-wrap:break-word;word-break:break-word;padding:0px 40px;font-family:'Lato',sans-serif;" align="left">
     
 <div align="left"  style="background-color:1c103b">
- <a href="http://${link+'/self-reset-password/reset/'+token }" > <button style="height: 64px;width: 303px;color: white;background-color: #30374C;border-radius: 38px;cursor: pointer;" type="button">
+ <a href="${link.startsWith('http') ? link : 'http://' + link}?token=${token}" > <button style="height: 64px;width: 303px;color: white;background-color: #30374C;border-radius: 38px;cursor: pointer;" type="button">
  <h2>Clique Aqui!</h2></button></a> 
 </div>
 
@@ -144,7 +144,7 @@ module.exports = (nameUser,link,token) => {
   <td style="overflow-wrap:break-word;word-break:break-word;padding:40px 40px 30px;font-family:'Lato',sans-serif;" align="left">
     
 <div style="line-height: 140%; text-align: left; word-wrap: break-word;">
-<p style="font-size: 14px; line-height: 140%;"><span style="color: #888888; font-size: 14px; line-height: 19.6px;"><em><span style="font-size: 16px; line-height: 22.4px;">&nbsp;Nota: Este &eacute; um email autom&aacute;tico enviado pelo sistema (UNIG4TELCO). Por favor n&atilde;o responda a este email.</span></em></span><br /><span style="color: #888888; font-size: 14px; line-height: 19.6px;"><em><span style="font-size: 16px; line-height: 22.4px;">&nbsp;</span></em></span></p>
+<p style="font-size: 14px; line-height: 140%;"><span style="color: #888888; font-size: 14px; line-height: 19.6px;"><em><span style="font-size: 16px; line-height: 22.4px;">&nbsp;Nota: Este &eacute; um email autom&aacute;tico enviado pelo sistema (ENCONTRAR). Por favor n&atilde;o responda a este email.</span></em></span><br /><span style="color: #888888; font-size: 14px; line-height: 19.6px;"><em><span style="font-size: 16px; line-height: 22.4px;">&nbsp;</span></em></span></p>
 </div>
 
   </td>
@@ -171,7 +171,7 @@ module.exports = (nameUser,link,token) => {
   <td style="overflow-wrap:break-word;word-break:break-word;padding:5px 10px 10px;font-family:'Lato',sans-serif;" align="left">
     
 <div style="line-height: 140%; text-align: left; word-wrap: break-word;">
-<p style="line-height: 140%; font-size: 14px; text-align: center;"><span style="color: #ecf0f1; font-size: 14px; line-height: 19.6px;">2019-2020 UNIG | Todos os Direitos Reservados</span></p>
+<p style="line-height: 140%; font-size: 14px; text-align: center;"><span style="color: #ecf0f1; font-size: 14px; line-height: 19.6px;">2019-2020 ENCONTRAR | Todos os Direitos Reservados</span></p>
 </div>
 
   </td>
