@@ -59,19 +59,66 @@ class AuthenticatedRepository {
       const existingUser = await new UsersService().findUsersByEmail(requestPayload.email);
 
       if (existingUser) {
+        // Se a conta foi deletada, reativar
+        if (existingUser.is_deleted) {
+          console.log('♻️  Reativando conta deletada:', {
+            userId: existingUser.id,
+            email: existingUser.email
+          });
+          
+          const Hash = use('Hash');
+          const hashedPassword = await Hash.make(requestPayload.password);
+          
+          // Reativar conta e atualizar dados
+          await Database
+            .table('users')
+            .where('id', existingUser.id)
+            .update({
+              is_deleted: false,
+              firstName: requestPayload.firstName,
+              lastName: requestPayload.lastName,
+              password: hashedPassword,
+              updated_at: new Date()
+            });
+          
+          // Buscar usuário atualizado
+          const reactivatedUser = await new UsersService().findUsersByEmail(requestPayload.email);
+          
+          console.log('✅ Conta reativada com sucesso:', {
+            userId: reactivatedUser.id,
+            email: reactivatedUser.email
+          });
+          
+          // Autenticar com a conta reativada
+          await this.authenticacao({
+            email: reactivatedUser.email,
+            firstName: requestPayload.firstName,
+            lastName: requestPayload.lastName,
+            password: requestPayload.password,
+            role: "customer"
+          }, auth, response);
+          
+          // Registar FCM token
+          console.log('📱 Tentando registrar FCM token na reativação...');
+          await this.registerFcmToken(reactivatedUser, fcm_token, device_name, device_type);
+          
+          return;
+        }
+        
+        // Conta ativa - não pode criar duplicada
         return response.unauthorized(null, {
           title: "Utilizador Existente",
-          message:
-            "O utilizador já possui uma conta activa" ,
+          message: "O utilizador já possui uma conta activa",
         });
       }
 
+      // Criar novo usuário
       const newUser = await new UsersService().createUser({ 
-        email:requestPayload.email,
-        firstName:requestPayload.firstName,
-        lastName:requestPayload.lastName,
-        password:requestPayload.password,
-      })
+        email: requestPayload.email,
+        firstName: requestPayload.firstName,
+        lastName: requestPayload.lastName,
+        password: requestPayload.password,
+      });
       
       console.log('✅ Novo usuário criado:', {
         userId: newUser.id,
@@ -79,12 +126,12 @@ class AuthenticatedRepository {
       });
 
       await this.authenticacao({
-        email:newUser.email,
-        firstName:requestPayload.firstName,
-        lastName:requestPayload.lastName,
-        password:requestPayload.password,
+        email: newUser.email,
+        firstName: requestPayload.firstName,
+        lastName: requestPayload.lastName,
+        password: requestPayload.password,
         role: "customer"
-      }, auth, response)
+      }, auth, response);
       
       // Registar FCM token se foi fornecido
       console.log('📱 Tentando registrar FCM token no signup...');
@@ -95,8 +142,7 @@ class AuthenticatedRepository {
       console.error('Stack:', e.stack);
       return response.unauthorized(null, {
         title: "Falha na Autenticação",
-        message:
-          "Consulta o administrador para resolver o problema",
+        message: "Consulta o administrador para resolver o problema",
       });
     }
   }

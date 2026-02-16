@@ -164,13 +164,8 @@ class UserController {
       // Commit da transação - garante que ambas operações foram bem sucedidas
       await trx.commit();
       
-      // 3. Fazer logout (fora da transação - se falhar não afeta a remoção da conta)
-      try {
-        await auth.logout();
-      } catch (logoutError) {
-        console.error('Erro ao fazer logout (conta já foi removida):', logoutError.message);
-        // Não bloqueia - a conta já foi removida com sucesso
-      }
+      // Nota: Com JWT não é necessário fazer logout no backend (stateless)
+      // O cliente mobile deve remover o token localmente
       
       return response.ok(null, { message: 'Conta removida com sucesso' });
     } catch (error) {
