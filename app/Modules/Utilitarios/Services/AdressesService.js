@@ -58,6 +58,7 @@
       addresses.forEach(address => {
         map[address.id] = {
           ...address,
+          price: address.price != null ? Math.round(address.price) : address.price,
           children: []
         };
       });
@@ -95,10 +96,17 @@
      * @returns
      */
     async getDeliveryTaxByCityName(name) {
-      return await Database.select('price').from('addresses')
+      const result = await Database.select('price').from('addresses')
         .where('name', name)
         //.where('is_deleted', 0)
         .first();
+      
+      // Convert price to integer if it exists
+      if (result && result.price != null) {
+        result.price = Math.round(result.price);
+      }
+      
+      return result;
     }
 
     async findAdressesById(Id) {
