@@ -34,7 +34,18 @@ class WebhookService {
         source: 'mobile_app',
         metadata: {
           itemsCount: orderItems.length,
-          items: orderItems
+          items: orderItems,
+          contactPhone: order.contactPhone,
+          fullName: order.fullName,
+          contactEmail: order.contactEmail,
+          // Adicionar informações de delivery e payment se disponíveis
+          delivery: {
+            id: order.deliveryId,
+            price: order.delivery_price || 0
+          },
+          payment: {
+            id: order.paymentId
+          }
         }
       }
 
