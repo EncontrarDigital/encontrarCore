@@ -243,6 +243,8 @@ class OrderFactory {
 
       const userAgent = request.header('user-agent') || ''
       const ua = userAgent.toLowerCase()
+      const referer = request.header('referer') || request.header('origin') || ''
+      const ipAddress = request.ip()
 
       // 1. Verificar headers customizados (mais confiável)
       const customPlatform = request.header('X-Platform') || request.header('x-platform')
@@ -254,7 +256,7 @@ class OrderFactory {
             app_version: request.header('X-App-Version') || request.header('x-app-version'),
             device_model: request.header('X-Device-Model') || request.header('x-device-model'),
             os_version: request.header('X-OS-Version') || request.header('x-os-version'),
-            ip_address: request.ip()
+            ip_address: ipAddress
           }
         }
       }
@@ -276,14 +278,26 @@ class OrderFactory {
           platform_type = 'mobile-app'
         }
       }
-      // Dart/Flutter genérico
-      else if (ua.includes('dart') && (ua.includes('android') || ua.includes('dalvik'))) {
-        source = 'android'
-        platform_type = 'mobile-app'
-      }
-      else if (ua.includes('dart') && (ua.includes('ios') || ua.includes('cfnetwork'))) {
-        source = 'ios'
-        platform_type = 'mobile-app'
+      // Dart/Flutter genérico - MELHORADO
+      else if (ua.includes('dart')) {
+        // Se é Dart mas não tem referer/origin, provavelmente é mobile app
+        if (!referer || referer === '') {
+          // Tentar detectar pela estrutura do IP
+          // IPs privados/internos geralmente indicam mobile app
+          if (ipAddress.includes('::ffff:') || ipAddress.includes('100.64.') || ipAddress.includes('10.') || ipAddress.includes('192.168.')) {
+            // Não conseguimos distinguir Android de iOS sem mais informações
+            // Vamos marcar como mobile-app genérico
+            source = 'mobile-app'
+            platform_type = 'mobile-app'
+          } else {
+            source = 'unknown'
+            platform_type = 'unknown'
+          }
+        } else {
+          // Se tem referer, pode ser web
+          source = 'web'
+          platform_type = 'web-app'
+        }
       }
       // Web browsers
       else if (ua.includes('mozilla') || ua.includes('chrome') || ua.includes('safari') || ua.includes('firefox')) {
@@ -324,8 +338,9 @@ class OrderFactory {
           user_agent: userAgent,
           platform_type: platform_type,
           app_version: app_version,
-          ip_address: request.ip(),
-          referer: request.header('referer') || request.header('origin')
+          ip_address: ipAddress,
+          referer: referer,
+          detection_note: ua.includes('dart') && source === 'mobile-app' ? 'Detected as mobile app based on Dart user-agent and network characteristics. Update app to send X-Platform header for precise detection.' : null
         }
       }
     }
