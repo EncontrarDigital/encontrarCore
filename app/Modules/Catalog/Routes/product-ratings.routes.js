@@ -1,21 +1,25 @@
 'use strict'
 
-const Route = use('Route')
-
-Route.group(() => {
+module.exports = function (ApiRoute, Route) {
   // Buscar avaliações de um produto (público)
-  Route.get('/products/:id/ratings', 'ProductRatingController.index')
+  Route.get('/api/products/:id/ratings', 'ProductRatingController.index')
+    .namespace('App/Modules/Catalog/Controllers')
   
   // Buscar média de rating (público)
-  Route.get('/products/:id/ratings/average', 'ProductRatingController.average')
+  Route.get('/api/products/:id/ratings/average', 'ProductRatingController.average')
+    .namespace('App/Modules/Catalog/Controllers')
   
   // Criar avaliação (autenticado ou anônimo)
-  Route.post('/products/:id/ratings', 'ProductRatingController.store')
+  Route.post('/api/products/:id/ratings', 'ProductRatingController.store')
+    .namespace('App/Modules/Catalog/Controllers')
   
   // Atualizar avaliação (autenticado)
-  Route.put('/ratings/:id', 'ProductRatingController.update').middleware(['auth'])
+  Route.put('/api/ratings/:id', 'ProductRatingController.update')
+    .middleware(['auth'])
+    .namespace('App/Modules/Catalog/Controllers')
   
   // Deletar avaliação (autenticado)
-  Route.delete('/ratings/:id', 'ProductRatingController.destroy').middleware(['auth'])
-  
-}).prefix('api').namespace('App/Modules/Catalog/Controllers')
+  Route.delete('/api/ratings/:id', 'ProductRatingController.destroy')
+    .middleware(['auth'])
+    .namespace('App/Modules/Catalog/Controllers')
+}
