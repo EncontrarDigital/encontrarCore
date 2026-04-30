@@ -10,27 +10,27 @@ class ProductRatingService {
    * Buscar todas as avaliações de um produto
    */
   async getProductRatings(productId) {
-    const ratings = await ProductRating
-      .query()
-      .where('productId', productId)
-      .with('user', (builder) => {
-        builder.select('id', 'first_name', 'last_name')
-      })
-      .orderBy('created', 'desc')
-      .fetch()
+    try {
+      const ratings = await ProductRating
+        .query()
+        .where('productId', productId)
+        .orderBy('created', 'desc')
+        .fetch()
 
-    return ratings.toJSON().map(rating => ({
-      id: rating.id,
-      productId: rating.productId,
-      rating: rating.rating,
-      comment: rating.comment,
-      user: rating.user ? {
-        name: `${rating.user.first_name || ''} ${rating.user.last_name || ''}`.trim() || 'Usuário'
-      } : {
-        name: 'Anônimo'
-      },
-      created: rating.created
-    }))
+      return ratings.toJSON().map(rating => ({
+        id: rating.id,
+        productId: rating.productId,
+        rating: rating.rating,
+        comment: rating.comment,
+        user: {
+          name: 'Usuário'  // Simplificado - pode adicionar relacionamento depois
+        },
+        created: rating.created
+      }))
+    } catch (error) {
+      console.error('❌ Error fetching product ratings:', error)
+      throw error
+    }
   }
 
   /**
