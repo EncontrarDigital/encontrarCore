@@ -7,6 +7,15 @@ class ProductRating extends Model {
     return 'product_ratings'
   }
 
+  // Desabilitar timestamps automáticos do Lucid
+  static get createdAtColumn() {
+    return 'created'
+  }
+
+  static get updatedAtColumn() {
+    return 'updated'
+  }
+
   static get dates() {
     return super.dates.concat(['created', 'updated'])
   }
