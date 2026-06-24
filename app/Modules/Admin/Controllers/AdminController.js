@@ -21,12 +21,37 @@ const UsersService = use('App/Modules/Authentication/Services/UsersService')
 class AdminController{
  
   async getProductsByShop ({ request, response, auth  }) {
-    const filters = request;
-    const UserId = auth.user.id;
-    const shop = await new ShopService().findShopByUserId(UserId)
-    const shopId = shop.id;
-    const data = await new ProductsService().getProductsByShop(filters, shopId);
-    return response.ok(data);
+    try {
+      const filters = request;
+      const UserId = auth.user.id;
+      const shop = await new ShopService().findShopByUserId(UserId)
+      const shopId = shop.id;
+      const data = await new ProductsService().getProductsByShop(filters, shopId);
+      
+      // Converter lastPage para número de forma robusta
+      let lastPageValue = data.lastPage || data.pages?.total || 1;
+      if (typeof lastPageValue === 'string') {
+        lastPageValue = Number(lastPageValue);
+      }
+      
+      // Converter para objeto simples para evitar erro toObject
+      const responseData = {
+        total: data.total || data.rows?.length || data.data?.length || 0,
+        perPage: data.perPage || data.rows?.length || data.data?.length || 0,
+        page: data.page || 1,
+        lastPage: lastPageValue,
+        data: data.data || data.rows || []
+      };
+      
+      return response.ok(responseData);
+    } catch (error) {
+      console.error('❌ [AdminController] getProductsByShop - Error:', error.message);
+      return response.status(500).json({
+        success: false,
+        message: 'Error fetching products',
+        error: error.message
+      });
+    }
   }
 
   async getShopInfo ({ response, auth  }) {

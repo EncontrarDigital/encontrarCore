@@ -165,6 +165,7 @@
         typeOrderBy: filters.input("typeOrderBy") || "DESC",
         searchBy: ["name", "description"],
         isPaginate: true,
+        withRalationships: ["photos"],
         isVisible: filters.input("isVisible") !== undefined ? filters.input("isVisible") : true
       };
   
@@ -177,6 +178,7 @@
             this.where('visible', true)
           }
         })
+        .with('photos')
       
       const result = await query.paginate(options.page, options.perPage || 10);
       
