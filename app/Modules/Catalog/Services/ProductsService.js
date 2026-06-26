@@ -121,8 +121,15 @@
      const ShopId = shop.id;
      const purchasePrice = ModelPayload.purchasePrice;
      const price = Math.round(ModelPayload.price) || await this.calculatePrice(purchasePrice)
+     
+     // Tratar description vazia - converter para string com valor padrão
+     const description = ModelPayload.description && ModelPayload.description.trim() !== '' 
+       ? ModelPayload.description 
+       : '-';
+     
      return await new ProductsRepository().create({
        ...ModelPayload,
+       description: description,
        price: price,
        shopId: ShopId,
       });  
