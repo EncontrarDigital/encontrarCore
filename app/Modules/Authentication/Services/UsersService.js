@@ -51,13 +51,14 @@
           if (!includeDeleted) {
             this.where('is_deleted', 0);
           }
-          if (role === 'sales') {
-            this.where('role', 'sales');
-          }
+          // if (role === 'sales') {
+          //   this.where('role', 'sales');
+          // }
         })
         .where('email', Email)
         .first();
     }
+937512003
 
     async getClientInfo(Id) {
       return await new UsersRepository().findById(Id) 
