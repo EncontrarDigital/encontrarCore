@@ -226,10 +226,27 @@ class PopulateV2CategoriesSeeder {
           category_version: 'v2',
           is_legacy: false,
           icon_path: v1Cat.icon_path, // Manter ícone original
+          v1_category_id: v1Cat.id, // Guardar ID da categoria V1 para buscar produtos
         })
-        console.log(`   ✓ ${v1Cat.name} (migrada de V1)`)
+        console.log(`   ✓ ${v1Cat.name} (migrada de V1, icon_path: ${v1Cat.icon_path || 'NULL'})`)
       } else {
-        console.log(`   → ${v1Cat.name} já existe`)
+        // Atualizar categoria existente com icon_path e v1_category_id se não tiver
+        const updates = {}
+        if (!existing.icon_path && v1Cat.icon_path) {
+          updates.icon_path = v1Cat.icon_path
+        }
+        if (!existing.v1_category_id) {
+          updates.v1_category_id = v1Cat.id
+        }
+        
+        if (Object.keys(updates).length > 0) {
+          await Database.table('categories')
+            .where('id', existing.id)
+            .update(updates)
+          console.log(`   → ${v1Cat.name} atualizado (icon_path: ${v1Cat.icon_path || 'NULL'}, v1_id: ${v1Cat.id})`)
+        } else {
+          console.log(`   → ${v1Cat.name} já existe e está completo`)
+        }
       }
     }
   }
