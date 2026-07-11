@@ -45,7 +45,8 @@ class CategoriesController{
   async getSubcategories ({ params, request, response }) {
     const parentCategoryId = params.id;
     const locale = request.locale || 'pt'; // Obter locale do middleware
-    const data = await new CategoriesService().getSubcategories(parentCategoryId, locale);
+    const version = request.input('version', 'v1'); // Obter versão, default v1
+    const data = await new CategoriesService().getSubcategories(parentCategoryId, locale, version);
     return response.ok(data);
   }
   /**

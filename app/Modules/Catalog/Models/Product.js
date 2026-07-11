@@ -15,17 +15,14 @@ class Products extends Model {
 
   /**
    * Relationship with ProductPhotos
+   * hasMany(relatedModel, primaryKey, foreignKey)
    */
-  photos() {
-    return this.hasMany('App/Modules/Catalog/Models/ProductPhoto', 'productId', 'id')
-  }
-
   photos() {
     return this.hasMany(
       'App/Modules/Catalog/Models/ProductPhoto',
-      'id',                // id of current model (products.id)
-      'productId'          // foreign key in product_photos table
-    )//.where('is_deleted', 0) // Add this if you have soft deletes
+      'id',                // Primary key of Product (products.id)
+      'productId'          // Foreign key in ProductPhoto (product_photos.productId)
+    )
   }
   
   static get createdAtColumn() {

@@ -16,6 +16,7 @@
     async findAllCategoriess(filters) {
       const search = filters.input("search");
       const locale = filters.locale || 'pt';
+      const version = filters.input("version") || "v1"; // v1 = antigo, v2 = novo
       
       const options = {
         page: filters.input("page") || 1,
@@ -24,11 +25,13 @@
         typeOrderBy: filters.input("typeOrderBy") || "DESC",
         searchBy: ["name", "description"],
         default: filters.input("default") || false,
-        isPaginate: true
+        isPaginate: true,
+        version: version
       };
   
       let query = this.categoriesRepository
-        .findAll(search, options) 
+        .findAll(search, options)
+        .where('category_version', version) // Filtrar por versão
         .where(function () {
           if (options.default) {
             this.whereNull("parentCategoryId");
@@ -82,9 +85,11 @@
 
     async buildCategoriesTree(filters) {
       const locale = filters.locale || 'pt'; // Obter locale do middleware
+      const version = filters.input ? filters.input("version") || "v1" : "v1";
+      
       const selectColumn =
-      `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path`;
-      const search = filters.input("search");
+      `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path, categories.category_version`;
+      const search = filters.input ? filters.input("search") : "";
 
       const options = {
         searchBy: ["name", "description"],
@@ -93,6 +98,7 @@
 
       const categoriesResult = await this.categoriesRepository
         .findAll(search, options, selectColumn)
+        .where('category_version', version) // Filtrar por versão
         .where((query) => {
         }).fetch();
 
@@ -146,15 +152,17 @@
      * Get subcategories of a specific category
      * @param {number} parentCategoryId - Parent category ID
      * @param {string} locale - Language code (pt, en)
+     * @param {string} version - Category version (v1, v2)
      * @returns {Promise<Array>} Array of subcategories
      */
-    async getSubcategories(parentCategoryId, locale = 'pt') {
+    async getSubcategories(parentCategoryId, locale = 'pt', version = 'v1') {
       const selectColumn =
-        `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path`;
+        `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path, categories.category_version`;
 
       const subcategoriesResult = await this.categoriesRepository
         .findAll('', { isPaginate: false }, selectColumn)
         .where('parentCategoryId', parentCategoryId)
+        .where('category_version', version) // Filtrar por versão
         .fetch();
 
       const subcategories = subcategoriesResult.toJSON();
