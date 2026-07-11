@@ -248,59 +248,99 @@ class PopulateV2CategoriesSeeder {
       return
     }
 
-    const subcategories = [
+    // Categorias de nível 2 (subcategorias diretas de Serviços)
+    const level2Categories = [
       {
-        name: 'Fotografia',
-        name_en: 'Photography',
-        description: 'Ensaios fotográficos e eventos',
-        description_en: 'Photo shoots and events',
-        slug: 'fotografia',
+        name: 'Multimédia',
+        name_en: 'Multimedia',
+        description: 'Serviços de streaming e entretenimento',
+        description_en: 'Streaming and entertainment services',
+        slug: 'multimedia',
       },
       {
-        name: 'Vídeo e Produção',
-        name_en: 'Video and Production',
-        description: 'Filmagens e produção audiovisual',
-        description_en: 'Filming and audiovisual production',
-        slug: 'video-producao',
-      },
-      {
-        name: 'Design Gráfico',
-        name_en: 'Graphic Design',
-        description: 'Criação visual e branding',
-        description_en: 'Visual creation and branding',
-        slug: 'design-grafico',
+        name: 'Manutenção',
+        name_en: 'Maintenance',
+        description: 'Serviços de limpeza e instalação',
+        description_en: 'Cleaning and installation services',
+        slug: 'manutencao',
       },
       {
         name: 'Eventos',
         name_en: 'Events',
-        description: 'Casamentos, festas e eventos corporativos',
-        description_en: 'Weddings, parties and corporate events',
+        description: 'Serviços para eventos',
+        description_en: 'Event services',
         slug: 'eventos',
-      },
-      {
-        name: 'Consultoria',
-        name_en: 'Consulting',
-        description: 'Serviços profissionais e consultoria',
-        description_en: 'Professional services and consulting',
-        slug: 'consultoria',
-      },
-      {
-        name: 'Educação e Treinamento',
-        name_en: 'Education and Training',
-        description: 'Cursos, aulas e treinamentos',
-        description_en: 'Courses, classes and training',
-        slug: 'educacao-treinamento',
-      },
-      {
-        name: 'Manutenção e Reparos',
-        name_en: 'Maintenance and Repairs',
-        description: 'Reparos e manutenção em geral',
-        description_en: 'General repairs and maintenance',
-        slug: 'manutencao-reparos',
       }
     ]
 
-    for (const subcat of subcategories) {
+    // Criar categorias de nível 2
+    const level2Ids = {}
+    
+    for (const cat of level2Categories) {
+      let existing = await Database.from('categories')
+        .where('slug', cat.slug)
+        .where('category_version', 'v2')
+        .first()
+      
+      if (!existing) {
+        const inserted = await Database.table('categories').insert({
+          ...cat,
+          service_fee: 0,
+          parentCategoryId: servicesCategory.id,
+          category_version: 'v2',
+          is_legacy: false,
+          icon_path: null,
+        }).returning('id')
+        
+        level2Ids[cat.slug] = inserted[0]
+        console.log(`   ✓ ${cat.name} (nível 2)`)
+      } else {
+        level2Ids[cat.slug] = existing.id
+        console.log(`   → ${cat.name} já existe`)
+      }
+    }
+
+    // Categorias de nível 3 (subcategorias de Multimédia)
+    const multimediaSubcategories = [
+      {
+        name: 'Netflix',
+        name_en: 'Netflix',
+        description: 'Streaming de filmes e séries',
+        description_en: 'Movies and series streaming',
+        slug: 'netflix',
+        parent: 'multimedia'
+      },
+      {
+        name: 'Prime Video',
+        name_en: 'Prime Video',
+        description: 'Amazon Prime Video',
+        description_en: 'Amazon Prime Video',
+        slug: 'prime-video',
+        parent: 'multimedia'
+      },
+      {
+        name: 'HBO Max',
+        name_en: 'HBO Max',
+        description: 'HBO Max streaming',
+        description_en: 'HBO Max streaming',
+        slug: 'hbo-max',
+        parent: 'multimedia'
+      },
+      {
+        name: 'Spotify',
+        name_en: 'Spotify',
+        description: 'Streaming de música',
+        description_en: 'Music streaming',
+        slug: 'spotify',
+        parent: 'multimedia'
+      }
+    ]
+
+    // Criar subcategorias de Multimédia
+    for (const subcat of multimediaSubcategories) {
+      const parentId = level2Ids[subcat.parent]
+      if (!parentId) continue
+      
       const existing = await Database.from('categories')
         .where('slug', subcat.slug)
         .where('category_version', 'v2')
@@ -308,14 +348,118 @@ class PopulateV2CategoriesSeeder {
       
       if (!existing) {
         await Database.table('categories').insert({
-          ...subcat,
+          name: subcat.name,
+          name_en: subcat.name_en,
+          description: subcat.description,
+          description_en: subcat.description_en,
+          slug: subcat.slug,
           service_fee: 0,
-          parentCategoryId: servicesCategory.id,
+          parentCategoryId: parentId,
           category_version: 'v2',
           is_legacy: false,
           icon_path: null,
         })
-        console.log(`   ✓ ${subcat.name}`)
+        console.log(`   ✓ ${subcat.name} (nível 3 - filho de ${subcat.parent})`)
+      }
+    }
+
+    // Subcategorias de Manutenção
+    const maintenanceSubcategories = [
+      {
+        name: 'Limpeza',
+        name_en: 'Cleaning Service',
+        description: 'Serviço de limpeza profissional',
+        description_en: 'Professional cleaning service',
+        slug: 'limpeza',
+        parent: 'manutencao'
+      },
+      {
+        name: 'Instalação Casa Inteligente',
+        name_en: 'Smart Home Installation',
+        description: 'Instalação de sistemas inteligentes',
+        description_en: 'Smart systems installation',
+        slug: 'instalacao-smart-home',
+        parent: 'manutencao'
+      }
+    ]
+
+    for (const subcat of maintenanceSubcategories) {
+      const parentId = level2Ids[subcat.parent]
+      if (!parentId) continue
+      
+      const existing = await Database.from('categories')
+        .where('slug', subcat.slug)
+        .where('category_version', 'v2')
+        .first()
+      
+      if (!existing) {
+        await Database.table('categories').insert({
+          name: subcat.name,
+          name_en: subcat.name_en,
+          description: subcat.description,
+          description_en: subcat.description_en,
+          slug: subcat.slug,
+          service_fee: 0,
+          parentCategoryId: parentId,
+          category_version: 'v2',
+          is_legacy: false,
+          icon_path: null,
+        })
+        console.log(`   ✓ ${subcat.name} (nível 3 - filho de ${subcat.parent})`)
+      }
+    }
+
+    // Subcategorias de Eventos
+    const eventsSubcategories = [
+      {
+        name: 'Espaço para Eventos',
+        name_en: 'Event Venue',
+        description: 'Locais para realizar eventos',
+        description_en: 'Venues for events',
+        slug: 'espaco-eventos',
+        parent: 'eventos'
+      },
+      {
+        name: 'Fotógrafo',
+        name_en: 'Cameraman',
+        description: 'Serviço de fotografia profissional',
+        description_en: 'Professional photography service',
+        slug: 'fotografo',
+        parent: 'eventos'
+      },
+      {
+        name: 'DJ',
+        name_en: 'DJ',
+        description: 'Serviço de DJ para eventos',
+        description_en: 'DJ service for events',
+        slug: 'dj',
+        parent: 'eventos'
+      }
+    ]
+
+    for (const subcat of eventsSubcategories) {
+      const parentId = level2Ids[subcat.parent]
+      if (!parentId) continue
+      
+      const existing = await Database.from('categories')
+        .where('slug', subcat.slug)
+        .where('category_version', 'v2')
+        .first()
+      
+      if (!existing) {
+        await Database.table('categories').insert({
+          name: subcat.name,
+          name_en: subcat.name_en,
+          description: subcat.description,
+          description_en: subcat.description_en,
+          slug: subcat.slug,
+          service_fee: 0,
+          parentCategoryId: parentId,
+          category_version: 'v2',
+          is_legacy: false,
+          icon_path: null,
+        })
+        console.log(`   ✓ ${subcat.name} (nível 3 - filho de ${subcat.parent})`)
       }
     }
   }
