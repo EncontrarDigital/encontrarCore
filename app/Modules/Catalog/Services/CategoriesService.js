@@ -157,7 +157,7 @@
      */
     async getSubcategories(parentCategoryId, locale = 'pt', version = 'v1') {
       const selectColumn =
-        `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path, categories.category_version`;
+        `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path, categories.category_version, categories.v1_category_id`;
 
       const subcategoriesResult = await this.categoriesRepository
         .findAll('', { isPaginate: false }, selectColumn)
@@ -183,7 +183,8 @@
         
         return {
           ...cleaned,
-          iconUrl: cat.icon_path ? this.getIconUrl(cat.icon_path) : null
+          iconUrl: cat.icon_path ? this.getIconUrl(cat.icon_path) : null,
+          v1CategoryId: cat.v1_category_id || null // Adicionar ID da categoria V1 original
         };
       });
     }
