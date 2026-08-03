@@ -81,8 +81,10 @@
         isVisible: filters.input("isVisible") !== undefined ? filters.input("isVisible") : true
       };
       
+      // Use DISTINCT para evitar duplicatas causadas pelo innerJoin
       let query = new ProductsRepository()
       .findAll(search, options) 
+      .distinct('products.*')  // ← FIX: DISTINCT para evitar duplicatas
       .innerJoin('categories_products_products', 'categories_products_products.productsId', 'products.id')
       .where(function () {
         this.where('categories_products_products.categoriesId', CategoryId)
@@ -252,8 +254,10 @@
         isVisible: filters.input("isVisible") !== undefined ? filters.input("isVisible") : true
       };
       
+      // Use DISTINCT para evitar duplicatas causadas pelo innerJoin
       let query = new ProductsRepository()
-        .findAll(search, options, selectColumn) 
+        .findAll(search, options, selectColumn)
+        .distinct('products.*')  // ← FIX: DISTINCT para evitar duplicatas 
         .innerJoin('categories_products_products', 'categories_products_products.productsId', 'products.id')
         .innerJoin('categories', 'categories.id', 'categories_products_products.categoriesId')
         .where(function () {
