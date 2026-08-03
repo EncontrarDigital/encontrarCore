@@ -17,8 +17,22 @@ module.exports = {
   |
   */
  origin: function (currentOrigin) {
+  console.log('🔒 [CORS] Origin received:', currentOrigin);
+  console.log('🔒 [CORS] NODE_ENV:', process.env.NODE_ENV);
+  
   // For development, allow all origins
-  if (process.env.NODE_ENV === 'development') {
+  if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
+    console.log('✅ [CORS] Development mode - allowing all origins');
+    return true;
+  }
+
+  // Allow localhost for development
+  if (currentOrigin && (
+    currentOrigin.includes('localhost') || 
+    currentOrigin.includes('127.0.0.1') ||
+    currentOrigin.includes('192.168.')
+  )) {
+    console.log('✅ [CORS] Localhost origin - allowing');
     return true;
   }
 
@@ -30,7 +44,10 @@ module.exports = {
     'https://www.admin.encontrarshopping.com'
   ];
   
-  return allowedOrigins.includes(currentOrigin) ? currentOrigin : false;
+  const isAllowed = allowedOrigins.includes(currentOrigin);
+  console.log(`${isAllowed ? '✅' : '❌'} [CORS] Origin ${currentOrigin} ${isAllowed ? 'allowed' : 'denied'}`);
+  
+  return isAllowed ? currentOrigin : false;
 },
 
   /*
