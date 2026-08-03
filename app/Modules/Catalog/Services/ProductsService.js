@@ -56,7 +56,14 @@
         result.data = translatedProducts;
       }
       
-      return result;
+      // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
+      return {
+        ...result,
+        page: result.page ?? parseInt(options.page),
+        perPage: result.perPage ?? parseInt(options.perPage),
+        total: result.total ?? 0,
+        lastPage: result.lastPage ?? 1
+      };
     }
     
     async getProductsByCategory(filters, CategoryId) {
@@ -88,6 +95,19 @@
       
       const result = await query.paginate(options.page, options.perPage || 10);
       
+      // 🔍 DEBUG - Ver estrutura completa da paginação
+      console.log('🔍 [DEBUG] getProductsByCategory - CategoryId:', CategoryId, 'Page:', options.page);
+      console.log('🔍 [DEBUG] Pagination result:', JSON.stringify({
+        page: result.page,
+        perPage: result.perPage,
+        total: result.total,
+        lastPage: result.lastPage,
+        pages: result.pages,
+        rowsLength: result.rows?.length,
+        dataLength: result.data?.length,
+        resultKeys: Object.keys(result)
+      }, null, 2));
+      
       // AdonisJS pode usar 'rows' ou 'data'
       const products = result.rows || result.data || [];
       
@@ -109,7 +129,14 @@
         result.data = translatedProducts;
       }
       
-      return result;
+      // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
+      return {
+        ...result,
+        page: result.page ?? parseInt(options.page),
+        perPage: result.perPage ?? parseInt(options.perPage),
+        total: result.total ?? 0,
+        lastPage: result.lastPage ?? 1
+      };
     }
     /**
      *
@@ -258,7 +285,14 @@
         result.data = translatedProducts;
       }
       
-      return result;
+      // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
+      return {
+        ...result,
+        page: result.page ?? parseInt(options.page),
+        perPage: result.perPage ?? parseInt(options.perPage),
+        total: result.total ?? 0,
+        lastPage: result.lastPage ?? 1
+      };
     }
 
     /**
