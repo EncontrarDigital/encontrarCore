@@ -57,12 +57,16 @@
       }
       
       // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
+      // AdonisJS Lucid retorna paginação em result.pages quando usa paginate()
+      const paginationData = result.pages || result;
+      
       return {
-        ...result,
-        page: result.page ?? parseInt(options.page),
-        perPage: result.perPage ?? parseInt(options.perPage),
-        total: result.total ?? 0,
-        lastPage: result.lastPage ?? 1
+        rows: result.rows || result.data || [],
+        data: result.data || result.rows || [],
+        page: paginationData.page ?? parseInt(options.page),
+        perPage: paginationData.perPage ?? parseInt(options.perPage),
+        total: paginationData.total ? parseInt(paginationData.total) : 0,
+        lastPage: paginationData.lastPage ?? 1
       };
     }
     
@@ -147,12 +151,16 @@
       }
       
       // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
+      // AdonisJS Lucid retorna paginação em result.pages quando usa paginate()
+      const paginationData = result.pages || result;
+      
       const finalResult = {
-        ...result,
-        page: result.page ?? parseInt(options.page),
-        perPage: result.perPage ?? parseInt(options.perPage),
-        total: result.total ?? 0,
-        lastPage: result.lastPage ?? 1
+        rows: result.rows || result.data || [],
+        data: result.data || result.rows || [],
+        page: paginationData.page ?? parseInt(options.page),
+        perPage: paginationData.perPage ?? parseInt(options.perPage),
+        total: paginationData.total ? parseInt(paginationData.total) : 0,
+        lastPage: paginationData.lastPage ?? 1
       };
       
       console.log('🔍 [FINAL RESULT] Returning:', JSON.stringify({
@@ -317,12 +325,16 @@
       }
       
       // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
+      // AdonisJS Lucid retorna paginação em result.pages quando usa paginate()
+      const paginationData = result.pages || result;
+      
       return {
-        ...result,
-        page: result.page ?? parseInt(options.page),
-        perPage: result.perPage ?? parseInt(options.perPage),
-        total: result.total ?? 0,
-        lastPage: result.lastPage ?? 1
+        rows: result.rows || result.data || [],
+        data: result.data || result.rows || [],
+        page: paginationData.page ?? parseInt(options.page),
+        perPage: paginationData.perPage ?? parseInt(options.perPage),
+        total: paginationData.total ? parseInt(paginationData.total) : 0,
+        lastPage: paginationData.lastPage ?? 1
       };
     }
 
