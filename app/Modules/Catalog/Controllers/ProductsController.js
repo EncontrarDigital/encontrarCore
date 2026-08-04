@@ -112,7 +112,21 @@ class ProductsController{
     try {
       const filters = request;
       const CategoryId = params.id;
+      
+      console.log('🎯 [CONTROLLER] getProductsByCategory - CategoryId:', CategoryId, 'Query params:', request.all());
+      
       const data = await new ProductsService().getProductsByCategory(filters, CategoryId);
+      
+      console.log('🎯 [CONTROLLER] Service returned:', JSON.stringify({
+        total: data.total,
+        perPage: data.perPage,
+        page: data.page,
+        lastPage: data.lastPage,
+        dataLength: data.data?.length,
+        rowsLength: data.rows?.length,
+        hasData: !!data.data,
+        hasRows: !!data.rows
+      }, null, 2));
       
       // Converter lastPage para número de forma robusta
       let lastPageValue = data.lastPage || data.pages?.total || 1;
@@ -129,9 +143,18 @@ class ProductsController{
         data: data.data || data.rows || []
       };
       
+      console.log('🎯 [CONTROLLER] Sending response:', JSON.stringify({
+        total: responseData.total,
+        perPage: responseData.perPage,
+        page: responseData.page,
+        lastPage: responseData.lastPage,
+        dataCount: responseData.data?.length
+      }, null, 2));
+      
       return response.ok(responseData);
     } catch (error) {
       console.error('❌ [ProductsController] getProductsByCategory - Error:', error.message);
+      console.error('❌ [ProductsController] Stack:', error.stack);
       return response.status(500).json({
         success: false,
         message: 'Error fetching products by category',

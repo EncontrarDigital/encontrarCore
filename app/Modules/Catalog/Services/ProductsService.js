@@ -95,11 +95,16 @@
       })
       .with('photos')
       
+      // 🔍 DEBUG - Ver SQL gerada
+      console.log('🔍 [SQL QUERY] CategoryId:', CategoryId, 'Generated SQL:', query.toSQL ? query.toSQL() : 'N/A');
+      
+      console.log('🔍 [BEFORE PAGINATE] CategoryId:', CategoryId, 'Page:', options.page, 'PerPage:', options.perPage);
+      
       const result = await query.paginate(options.page, options.perPage || 10);
       
       // 🔍 DEBUG - Ver estrutura completa da paginação
-      console.log('🔍 [DEBUG] getProductsByCategory - CategoryId:', CategoryId, 'Page:', options.page);
-      console.log('🔍 [DEBUG] Pagination result:', JSON.stringify({
+      console.log('🔍 [AFTER PAGINATE] getProductsByCategory - CategoryId:', CategoryId, 'Page:', options.page);
+      console.log('🔍 [AFTER PAGINATE] Raw result:', JSON.stringify({
         page: result.page,
         perPage: result.perPage,
         total: result.total,
@@ -107,14 +112,20 @@
         pages: result.pages,
         rowsLength: result.rows?.length,
         dataLength: result.data?.length,
-        resultKeys: Object.keys(result)
+        resultKeys: Object.keys(result),
+        hasRows: !!result.rows,
+        hasData: !!result.data
       }, null, 2));
       
       // AdonisJS pode usar 'rows' ou 'data'
       const products = result.rows || result.data || [];
       
+      console.log('🔍 [PRODUCTS EXTRACTED] Count:', products.length, 'Type:', Array.isArray(products) ? 'Array' : typeof products);
+      
       // Apply translations to products - PADRÃO FAQ
       if (products && products.length > 0) {
+        console.log('🔍 [TRANSLATING] Translating', products.length, 'products to locale:', locale);
+        
         const translatedProducts = products.map(product => {
           const productJson = product.toJSON ? product.toJSON() : product;
           
@@ -129,16 +140,32 @@
         
         result.rows = translatedProducts;
         result.data = translatedProducts;
+        
+        console.log('🔍 [TRANSLATED] Updated result.rows and result.data with', translatedProducts.length, 'products');
+      } else {
+        console.log('⚠️ [NO PRODUCTS] No products to translate for CategoryId:', CategoryId);
       }
       
       // ✅ FIX: Garantir que campos de paginação sempre existam (compatibilidade com apps mobile/partner)
-      return {
+      const finalResult = {
         ...result,
         page: result.page ?? parseInt(options.page),
         perPage: result.perPage ?? parseInt(options.perPage),
         total: result.total ?? 0,
         lastPage: result.lastPage ?? 1
       };
+      
+      console.log('🔍 [FINAL RESULT] Returning:', JSON.stringify({
+        page: finalResult.page,
+        perPage: finalResult.perPage,
+        total: finalResult.total,
+        lastPage: finalResult.lastPage,
+        dataCount: finalResult.data?.length || finalResult.rows?.length || 0,
+        hasData: !!(finalResult.data?.length),
+        hasRows: !!(finalResult.rows?.length)
+      }, null, 2));
+      
+      return finalResult;
     }
     /**
      *
