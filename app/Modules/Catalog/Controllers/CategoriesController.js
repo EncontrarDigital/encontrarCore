@@ -80,6 +80,34 @@ class CategoriesController{
   }
 
   /**
+   * Find category by SEO slug (URLs bonitas)
+   * GET /categories/slug/:slug
+   *
+   * @param {object} ctx
+   * @param {Request} ctx.request
+   * @param {Response} ctx.response
+   * @param {Object} ctx.params
+   */
+  async findBySlug ({ params, request, response }) {
+    console.log(`🔍 [CategoriesController] findBySlug called with slug: "${params.slug}"`);
+    
+    const seoSlug = params.slug;
+    const locale = request.locale || 'pt';
+    const version = request.input('version', 'v1');
+    
+    console.log(`🔍 [CategoriesController] Locale: ${locale}, Version: ${version}`);
+    
+    try {
+      const data = await new CategoriesService().findCategoryBySeoSlug(seoSlug, locale, version);
+      console.log(`✅ [CategoriesController] Category found: ID ${data.id}, name: "${data.name}"`);
+      return response.ok(data);
+    } catch (error) {
+      console.error(`❌ [CategoriesController] Error finding category: ${error.message}`);
+      return response.notFound({ message: error.message });
+    }
+  }
+
+  /**
    * Update icttrunkout details.
    * PUT or PATCH icttrunkouts/:id
    *

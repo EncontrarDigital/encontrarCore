@@ -83,6 +83,56 @@
       };
     }
 
+    /**
+     * Busca categoria por SEO slug (URLs bonitas)
+     * Primeiro tenta por seo_slug, se não encontrar tenta por slug técnico
+     */
+    async findCategoryBySeoSlug(seoSlug, locale = 'pt', version = 'v1') {
+      console.log(`🔍 [CategoriesService] Buscando categoria por seo_slug: "${seoSlug}" (versão: ${version})`);
+      
+      // Tentar buscar por seo_slug primeiro
+      let category = await this.categoriesRepository
+        .findBySeoSlug(seoSlug)
+        .where('category_version', version)
+        .first();
+      
+      // Se não encontrou, tentar por slug técnico (fallback)
+      if (!category) {
+        console.log(`⚠️  [CategoriesService] Não encontrou por seo_slug, tentando slug técnico...`);
+        category = await this.categoriesRepository
+          .findBySlug(seoSlug)
+          .where('category_version', version)
+          .first();
+      }
+      
+      if (!category) {
+        console.log(`❌ [CategoriesService] Categoria não encontrada: "${seoSlug}"`);
+        throw new NotFoundException(`Category with seo_slug/slug "${seoSlug}" not found`);
+      }
+      
+      console.log(`✅ [CategoriesService] Categoria encontrada: ID ${category.id}, nome: "${category.name}"`);
+      
+      const categoryData = category.toJSON ? category.toJSON() : category;
+      
+      // Traduzir
+      const translated = TranslationHelper.translateObject(
+        categoryData,
+        ['name', 'description'],
+        locale
+      );
+      
+      // Limpar campos de tradução
+      const cleaned = TranslationHelper.cleanTranslationFields(
+        translated,
+        ['name', 'description']
+      );
+      
+      return {
+        ...cleaned,
+        iconUrl: category.iconUrl || null
+      };
+    }
+
     async buildCategoriesTree(filters) {
       const locale = filters.locale || 'pt'; // Obter locale do middleware
       const version = filters.input ? filters.input("version") || "v1" : "v1";

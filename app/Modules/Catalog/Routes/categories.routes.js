@@ -4,6 +4,7 @@
     ApiRoute(() => {
       Route.get("/", "CategoriesController.index");
       Route.get("/buildCategoriesTree", "CategoriesController.buildCategoriesTree");
+      Route.get("/slug/:slug", "CategoriesController.findBySlug"); // NOVA ROTA - Busca por SEO slug
       Route.get("/:id/subcategories", "CategoriesController.getSubcategories");
       Route.post("/", "CategoriesController.store").middleware(["auth"]);
       Route.get("/:id", "CategoriesController.show");
