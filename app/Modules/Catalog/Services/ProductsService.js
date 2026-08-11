@@ -109,6 +109,19 @@
           ];
           
           console.log(`🎯 [ProductsService.getProductsByCategory] Searching in V1 category + subcategories: [${targetCategoryIds.join(', ')}]`);
+        } else {
+          // Para qualquer categoria (V1 ou V2), incluir suas subcategorias
+          const subcategories = await Database.table('categories')
+            .where('parentCategoryId', CategoryId)
+            .select('id');
+          
+          if (subcategories.length > 0) {
+            targetCategoryIds = [
+              CategoryId,
+              ...subcategories.map(cat => cat.id)
+            ];
+            console.log(`🎯 [ProductsService.getProductsByCategory] Including subcategories: [${targetCategoryIds.join(', ')}]`);
+          }
         }
       }
       

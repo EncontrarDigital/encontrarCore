@@ -213,15 +213,20 @@
      * @param {string} version - Category version (v1, v2)
      * @returns {Promise<Array>} Array of subcategories
      */
-    async getSubcategories(parentCategoryId, locale = 'pt', version = 'v1') {
+    async getSubcategories(parentCategoryId, locale = 'pt', version = null) {
       const selectColumn =
         `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path, categories.category_version, categories.v1_category_id`;
 
-      const subcategoriesResult = await this.categoriesRepository
+      let query = this.categoriesRepository
         .findAll('', { isPaginate: false }, selectColumn)
-        .where('parentCategoryId', parentCategoryId)
-        .where('category_version', version) // Filtrar por versão
-        .fetch();
+        .where('parentCategoryId', parentCategoryId);
+      
+      // Apenas filtrar por versão se especificada explicitamente
+      if (version) {
+        query = query.where('category_version', version);
+      }
+      
+      const subcategoriesResult = await query.fetch();
 
       const subcategories = subcategoriesResult.toJSON();
 

@@ -41,7 +41,8 @@ module.exports = {
     'https://admin.encontrarshopping.com',
     'https://encontrarshopping.com',
     'https://www.encontrarshopping.com',
-    'https://www.admin.encontrarshopping.com'
+    'https://www.admin.encontrarshopping.com',
+    'http//localhost:3101'
   ];
   
   const isAllowed = allowedOrigins.includes(currentOrigin);
