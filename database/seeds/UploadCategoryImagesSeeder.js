@@ -56,9 +56,9 @@ class UploadCategoryImagesSeeder {
     
     // Mapeamento de slugs para arquivos
     const mainCategoriesMap = {
-      'organicos': null, // Não tem imagem ainda
+      'organicos': 'organics.jpg', // ✨ ADICIONADO
       'produtos': 'box.png',
-      'servicos': null // Usaremos uma imagem genérica ou null
+      'servicos': 'services.jpeg' // ✨ ADICIONADO
     }
 
     for (const [slug, filename] of Object.entries(mainCategoriesMap)) {

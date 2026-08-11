@@ -44,8 +44,12 @@ class CategoriesController{
    */
   async getSubcategories ({ params, request, response }) {
     const parentCategoryId = params.id;
-    const locale = request.locale || 'pt'; // Obter locale do middleware
-    const version = request.input('version', 'v1'); // Obter versão, default v1
+    const locale = request.locale || 'pt';
+    
+    // ✨ MUDANÇA: Só passa version se vier explicitamente na query
+    // Isso permite que o service busque subcategorias de qualquer versão quando não especificado
+    const version = request.input('version'); // Remove default 'v1'
+    
     const data = await new CategoriesService().getSubcategories(parentCategoryId, locale, version);
     return response.ok(data);
   }

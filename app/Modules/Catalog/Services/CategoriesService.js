@@ -44,7 +44,9 @@
           if (options.default) {
             this.whereNull("parentCategoryId");
           }
-        })//.where('is_deleted', 0)
+        })
+        .whereNot('slug', 'produtos') // ✨ Excluir categoria "Produtos"
+        //.where('is_deleted', 0)
       
       const result = await query.paginate(options.page, options.perPage || 10);
       
@@ -71,7 +73,7 @@
           
           return {
             ...cleaned,
-            iconUrl: cat.iconUrl || null
+            iconUrl: category.icon_path ? this.getIconUrl(category.icon_path) : null
           };
         });
         
@@ -210,18 +212,24 @@
      * Get subcategories of a specific category
      * @param {number} parentCategoryId - Parent category ID
      * @param {string} locale - Language code (pt, en)
-     * @param {string} version - Category version (v1, v2)
+     * @param {string} version - Category version (v1, v2) - if not provided, gets subcategories of any version
      * @returns {Promise<Array>} Array of subcategories
      */
-    async getSubcategories(parentCategoryId, locale = 'pt', version = 'v1') {
+    async getSubcategories(parentCategoryId, locale = 'pt', version = null) {
       const selectColumn =
         `categories.id, categories.name, categories.name_en, categories.description, categories.description_en, categories.slug, categories."parentCategoryId", categories.icon_path, categories.category_version, categories.v1_category_id`;
 
-      const subcategoriesResult = await this.categoriesRepository
+      let query = this.categoriesRepository
         .findAll('', { isPaginate: false }, selectColumn)
         .where('parentCategoryId', parentCategoryId)
-        .where('category_version', version) // Filtrar por versão
-        .fetch();
+        .whereNot('slug', 'produtos'); // ✨ Excluir categoria "Produtos"
+      
+      // Se versão for especificada, filtrar por ela; senão buscar todas as versões
+      if (version) {
+        query = query.where('category_version', version);
+      }
+      
+      const subcategoriesResult = await query.fetch();
 
       const subcategories = subcategoriesResult.toJSON();
 
