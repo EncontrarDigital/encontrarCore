@@ -89,17 +89,30 @@
         .where('id', CategoryId)
         .first();
       
-      let targetCategoryId = CategoryId;
+      let targetCategoryIds = [CategoryId];
       
       if (categoryInfo) {
-        // Se for V2 e tiver v1_category_id, buscar produtos na categoria V1
+        // Se for V2 e tiver v1_category_id, buscar produtos na categoria V1 e suas subcategorias
         if (categoryInfo.category_version === 'v2' && categoryInfo.v1_category_id) {
           console.log(`✅ [ProductsService.getProductsByCategory] V2 category found, will search in V1 category: ${categoryInfo.v1_category_id}`);
-          targetCategoryId = categoryInfo.v1_category_id;
+          
+          // Buscar todas as subcategorias V1
+          const v1Subcategories = await Database.table('categories')
+            .where('parentCategoryId', categoryInfo.v1_category_id)
+            .where('category_version', 'v1')
+            .select('id');
+          
+          // Incluir a categoria pai V1 + todas as subcategorias V1
+          targetCategoryIds = [
+            categoryInfo.v1_category_id,
+            ...v1Subcategories.map(cat => cat.id)
+          ];
+          
+          console.log(`🎯 [ProductsService.getProductsByCategory] Searching in V1 category + subcategories: [${targetCategoryIds.join(', ')}]`);
         }
       }
       
-      console.log(`🎯 [ProductsService.getProductsByCategory] Searching products in category: ${targetCategoryId}`);
+      console.log(`🎯 [ProductsService.getProductsByCategory] Final target categories:`, targetCategoryIds);
       
       // Use DISTINCT para evitar duplicatas causadas pelo innerJoin
       let query = new ProductsRepository()
@@ -107,7 +120,7 @@
       .distinct('products.*')  // ← FIX: DISTINCT para evitar duplicatas
       .innerJoin('categories_products_products', 'categories_products_products.productsId', 'products.id')
       .where(function () {
-        this.where('categories_products_products.categoriesId', targetCategoryId)
+        this.whereIn('categories_products_products.categoriesId', targetCategoryIds)
         this.where('products.is_deleted', 0)
         if (options.isVisible) {
           this.where('products.visible', true)
