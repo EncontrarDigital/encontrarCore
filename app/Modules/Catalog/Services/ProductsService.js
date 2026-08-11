@@ -47,7 +47,8 @@
           return {
             ...productJson,
             name: TranslationHelper.translateField(productJson, 'name', locale),
-            description: TranslationHelper.translateField(productJson, 'description', locale)
+            description: TranslationHelper.translateField(productJson, 'description', locale),
+            unit: productJson.unit || 'unidade' // ✅ Default unit if not set
           };
         });
         
@@ -160,7 +161,8 @@
           const translated = {
             ...productJson,
             name: TranslationHelper.translateField(productJson, 'name', locale),
-            description: TranslationHelper.translateField(productJson, 'description', locale)
+            description: TranslationHelper.translateField(productJson, 'description', locale),
+            unit: productJson.unit || 'unidade' // ✅ Default unit if not set
           };
           
           return translated;
@@ -286,7 +288,8 @@
           return {
             ...productJson,
             name: TranslationHelper.translateField(productJson, 'name', locale),
-            description: TranslationHelper.translateField(productJson, 'description', locale)
+            description: TranslationHelper.translateField(productJson, 'description', locale),
+            unit: productJson.unit || 'unidade' // ✅ Default unit if not set
           };
         });
         
@@ -339,7 +342,8 @@
           return {
             ...productJson,
             name: TranslationHelper.translateField(productJson, 'name', locale),
-            description: TranslationHelper.translateField(productJson, 'description', locale)
+            description: TranslationHelper.translateField(productJson, 'description', locale),
+            unit: productJson.unit || 'unidade' // ✅ Default unit if not set
           };
         });
         
