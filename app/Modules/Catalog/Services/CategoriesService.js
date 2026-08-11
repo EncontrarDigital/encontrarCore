@@ -16,7 +16,15 @@
     async findAllCategoriess(filters) {
       const search = filters.input("search");
       const locale = filters.locale || 'pt';
-      const version = filters.input("version") || "v1"; // v1 = antigo, v2 = novo
+      
+      // ✨ NOVO: Suporte para múltiplas versões
+      const versionsParam = filters.input("versions"); // Exemplo: "v1,v2"
+      const versionParam = filters.input("version") || "v1"; // Fallback para backward compatibility
+      
+      // Se passar "versions", usar array; senão usar "version" único
+      const versions = versionsParam 
+        ? versionsParam.split(',').map(v => v.trim())
+        : [versionParam];
       
       const options = {
         page: filters.input("page") || 1,
@@ -26,12 +34,12 @@
         searchBy: ["name", "description"],
         default: filters.input("default") || false,
         isPaginate: true,
-        version: version
+        versions: versions // Passar array de versões
       };
   
       let query = this.categoriesRepository
         .findAll(search, options)
-        .where('category_version', version) // Filtrar por versão
+        .whereIn('category_version', versions) // ← Mudança: whereIn em vez de where
         .where(function () {
           if (options.default) {
             this.whereNull("parentCategoryId");
