@@ -148,29 +148,11 @@
       
       const result = await query.paginate(options.page, options.perPage || 10);
       
-      // 🔍 DEBUG - Ver estrutura completa da paginação
-      console.log('🔍 [AFTER PAGINATE] getProductsByCategory - CategoryId:', CategoryId, 'Page:', options.page);
-      console.log('🔍 [AFTER PAGINATE] Raw result:', JSON.stringify({
-        page: result.page,
-        perPage: result.perPage,
-        total: result.total,
-        lastPage: result.lastPage,
-        pages: result.pages,
-        rowsLength: result.rows?.length,
-        dataLength: result.data?.length,
-        resultKeys: Object.keys(result),
-        hasRows: !!result.rows,
-        hasData: !!result.data
-      }, null, 2));
-      
       // AdonisJS pode usar 'rows' ou 'data'
       const products = result.rows || result.data || [];
-      
-      console.log('🔍 [PRODUCTS EXTRACTED] Count:', products.length, 'Type:', Array.isArray(products) ? 'Array' : typeof products);
-      
+         
       // Apply translations to products - PADRÃO FAQ
       if (products && products.length > 0) {
-        console.log('🔍 [TRANSLATING] Translating', products.length, 'products to locale:', locale);
         
         const translatedProducts = products.map(product => {
           const productJson = product.toJSON ? product.toJSON() : product;
@@ -187,7 +169,6 @@
         result.rows = translatedProducts;
         result.data = translatedProducts;
         
-        console.log('🔍 [TRANSLATED] Updated result.rows and result.data with', translatedProducts.length, 'products');
       } else {
         console.log('⚠️ [NO PRODUCTS] No products to translate for CategoryId:', CategoryId);
       }

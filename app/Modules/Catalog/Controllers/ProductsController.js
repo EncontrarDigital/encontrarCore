@@ -143,14 +143,6 @@ class ProductsController{
         data: data.data || data.rows || []
       };
       
-      console.log('🎯 [CONTROLLER] Sending response:', JSON.stringify({
-        total: responseData.total,
-        perPage: responseData.perPage,
-        page: responseData.page,
-        lastPage: responseData.lastPage,
-        dataCount: responseData.data?.length
-      }, null, 2));
-      
       return response.ok(responseData);
     } catch (error) {
       console.error('❌ [ProductsController] getProductsByCategory - Error:', error.message);
