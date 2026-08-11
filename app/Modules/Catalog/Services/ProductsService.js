@@ -84,6 +84,22 @@
         isPaginate: true,
         isVisible: filters.input("isVisible") !== undefined ? filters.input("isVisible") : true
       };
+       // Verificar se é categoria V2 com v1_category_id
+      const categoryInfo = await Database.table('categories')
+        .where('id', CategoryId)
+        .first();
+      
+      let targetCategoryId = CategoryId;
+      
+      if (categoryInfo) {
+        // Se for V2 e tiver v1_category_id, buscar produtos na categoria V1
+        if (categoryInfo.category_version === 'v2' && categoryInfo.v1_category_id) {
+          console.log(`✅ [ProductsService.getProductsByCategory] V2 category found, will search in V1 category: ${categoryInfo.v1_category_id}`);
+          targetCategoryId = categoryInfo.v1_category_id;
+        }
+      }
+      
+      console.log(`🎯 [ProductsService.getProductsByCategory] Searching products in category: ${targetCategoryId}`);
       
       // Use DISTINCT para evitar duplicatas causadas pelo innerJoin
       let query = new ProductsRepository()
@@ -91,7 +107,7 @@
       .distinct('products.*')  // ← FIX: DISTINCT para evitar duplicatas
       .innerJoin('categories_products_products', 'categories_products_products.productsId', 'products.id')
       .where(function () {
-        this.where('categories_products_products.categoriesId', CategoryId)
+        this.where('categories_products_products.categoriesId', targetCategoryId)
         this.where('products.is_deleted', 0)
         if (options.isVisible) {
           this.where('products.visible', true)
