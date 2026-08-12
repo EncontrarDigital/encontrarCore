@@ -95,7 +95,6 @@
       if (categoryInfo) {
         // Se for V2 e tiver v1_category_id, buscar produtos na categoria V1 e suas subcategorias
         if (categoryInfo.category_version === 'v2' && categoryInfo.v1_category_id) {
-          console.log(`✅ [ProductsService.getProductsByCategory] V2 category found, will search in V1 category: ${categoryInfo.v1_category_id}`);
           
           // Buscar todas as subcategorias V1
           const v1Subcategories = await Database.table('categories')
@@ -109,7 +108,6 @@
             ...v1Subcategories.map(cat => cat.id)
           ];
           
-          console.log(`🎯 [ProductsService.getProductsByCategory] Searching in V1 category + subcategories: [${targetCategoryIds.join(', ')}]`);
         } else {
           // Para qualquer categoria (V1 ou V2), incluir suas subcategorias
           const subcategories = await Database.table('categories')
@@ -121,13 +119,10 @@
               CategoryId,
               ...subcategories.map(cat => cat.id)
             ];
-            console.log(`🎯 [ProductsService.getProductsByCategory] Including subcategories: [${targetCategoryIds.join(', ')}]`);
           }
         }
       }
-      
-      console.log(`🎯 [ProductsService.getProductsByCategory] Final target categories:`, targetCategoryIds);
-      
+          
       // Use DISTINCT para evitar duplicatas causadas pelo innerJoin
       let query = new ProductsRepository()
       .findAll(search, options) 
@@ -143,9 +138,6 @@
       .with('photos')
       
       // 🔍 DEBUG - Ver SQL gerada
-      console.log('🔍 [SQL QUERY] CategoryId:', CategoryId, 'Generated SQL:', query.toSQL ? query.toSQL() : 'N/A');
-      
-      console.log('🔍 [BEFORE PAGINATE] CategoryId:', CategoryId, 'Page:', options.page, 'PerPage:', options.perPage);
       
       const result = await query.paginate(options.page, options.perPage || 10);
       
@@ -188,15 +180,6 @@
         lastPage: paginationData.lastPage ?? 1
       };
       
-      console.log('🔍 [FINAL RESULT] Returning:', JSON.stringify({
-        page: finalResult.page,
-        perPage: finalResult.perPage,
-        total: finalResult.total,
-        lastPage: finalResult.lastPage,
-        dataCount: finalResult.data?.length || finalResult.rows?.length || 0,
-        hasData: !!(finalResult.data?.length),
-        hasRows: !!(finalResult.rows?.length)
-      }, null, 2));
       
       return finalResult;
     }

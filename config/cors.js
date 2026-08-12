@@ -17,8 +17,6 @@ module.exports = {
   |
   */
  origin: function (currentOrigin) {
-  console.log('🔒 [CORS] Origin received:', currentOrigin);
-  console.log('🔒 [CORS] NODE_ENV:', process.env.NODE_ENV);
   
   // For development, allow all origins
   if (process.env.NODE_ENV === 'development' || !process.env.NODE_ENV) {
@@ -41,8 +39,7 @@ module.exports = {
     'https://admin.encontrarshopping.com',
     'https://encontrarshopping.com',
     'https://www.encontrarshopping.com',
-    'https://www.admin.encontrarshopping.com',
-    'http//localhost:3101'
+    'https://www.admin.encontrarshopping.com'
   ];
   
   const isAllowed = allowedOrigins.includes(currentOrigin);

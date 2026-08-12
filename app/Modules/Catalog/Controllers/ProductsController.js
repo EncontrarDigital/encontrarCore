@@ -112,9 +112,7 @@ class ProductsController{
     try {
       const filters = request;
       const CategoryId = params.id;
-      
-      console.log('🎯 [CONTROLLER] getProductsByCategory - CategoryId:', CategoryId, 'Query params:', request.all());
-      
+        
       const data = await new ProductsService().getProductsByCategory(filters, CategoryId);
       
       console.log('🎯 [CONTROLLER] Service returned:', JSON.stringify({
